@@ -1,4 +1,4 @@
-# gaokaoRecommend
+# gaokaoRecommend![输入图片说明](%E9%AB%98%E6%A0%A1%E4%B8%93%E4%B8%9A-4.png)
 
 #### 介绍
 基于协同过滤和内容的高校报考推荐管理系统
@@ -33,7 +33,7 @@ SpringBoot + vue + redis + kafka + mysql + es
 ###### 高校专业-2
 ![高校专业-2](https://foruda.gitee.com/images/1713710237255296550/0f1e6160_10043282.png "高校专业-2.png")
 ###### 高校专业-3
-![高校专业-3](https://foruda.gitee.com/images/1713710272520534047/486485d2_10043282.png "高校专业-3.png")
+![高校专业-3](https://foruda.gitee.com/images/1713710272520534047/486485d2_10043282.png "高校专业-3.png")![输入图片说明](%E9%AB%98%E6%A0%A1%E4%B8%93%E4%B8%9A-6.png)
 ###### 省份分数线 有待完善
 ![省份分数线 有待完善](https://foruda.gitee.com/images/1713710323642110013/31e70701_10043282.png "省份分数线.png")
 ###### 专业分数线 有待完善
@@ -46,3 +46,4 @@ SpringBoot + vue + redis + kafka + mysql + es
 ![专业详细信息管理](https://foruda.gitee.com/images/1713710450756095701/f9beb7c1_10043282.png "专业详细信息管理.png")
 
 
+![输入图片说明](%E9%AB%98%E6%A0%A1%E4%B8%93%E4%B8%9A-5.png)
