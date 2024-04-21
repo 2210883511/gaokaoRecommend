@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zzuli.gaokao.mapper.UniversityInfoMapper">
+
+
+    <select id="getCustom" resultType="java.util.Map">
+        select
+            u.school_id as schoolId,u.school_name as schoolName,u.header_url as headerUrl,
+            info.content,info.belong,info.address,info.area,info.create_date as createDate,
+            info.num_doctor as numDoctor,info.num_master as numMaster,info.num_subject as numSubject,info.id
+        from university u
+        left join university_info info on u.school_id = info.school_id
+        where 1 = 1
+        and u.status = 1
+
+        <if test="provinceId != null">
+            and u.province_id  =  #{provinceId}
+        </if>
+        <if test="schoolName != null">
+            and u.school_name like concat('%',#{schoolName},'%')
+        </if>
+
+    </select>
+</mapper>

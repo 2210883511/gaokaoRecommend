@@ -1,0 +1,50 @@
+package com.zzuli.gaokao.vo;
+
+import com.zzuli.gaokao.bean.University;
+import com.zzuli.gaokao.bean.UniversityTags;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+public class UniversityVo {
+
+    private Integer schoolId;
+
+    private String schoolName;
+
+    private String headerUrl;
+
+    private String cityName;
+
+    private String townName;
+
+    private String dualClassName;
+
+    private String typeName;
+
+    private Integer f985;
+
+    private Integer f211;
+
+    private String url;
+
+
+    public void setUniversity(University university){
+
+        this.setSchoolId(university.getSchoolId());
+        this.setCityName(university.getCityName());
+        this.setTownName(university.getTownName());
+        this.setHeaderUrl(university.getHeaderUrl());
+        this.setSchoolName(university.getSchoolName());
+
+    }
+
+    public void setTag(UniversityTags tag){
+        this.setTypeName(tag.getTypeName());
+        this.setF985(tag.getF985());
+        this.setF211(tag.getF211());
+        this.setDualClassName(tag.getDualClassName());
+
+    }
+}

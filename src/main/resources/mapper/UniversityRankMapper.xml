@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zzuli.gaokao.mapper.UniversityRankMapper">
+
+    <select id="getCustom" resultType="java.util.Map">
+        select
+            u.school_id,u.school_name,u.header_url,
+            r.`rank`,r.rank_name,r.rank_type,r.id
+        from university u
+        inner join university_rank r on u.school_id = r.school_id
+        where 1 = 1
+        and u.status != 2
+        <if test="provinceId != null">
+            and u.province_id = #{provinceId}
+        </if>
+        <if test="schoolName != null">
+            and u.school_name like CONCAT('%',#{schoolName},'%')
+        </if>
+    </select>
+</mapper>

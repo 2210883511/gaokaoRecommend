@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zzuli.gaokao.mapper.MasterDetailMapper">
+
+    <!--  Page<Map<String,Object>> selectCustom(@Param("page") Page<Map<String,Object>> page,@Param("masterName") String masterName,
+                                          @Param("type") String type,
+                                          @Param("typeDetail") String typeDetail,
+                                          @Param("levelName") String levelName);-->
+    <select id="selectCustom"   resultType="map">
+        select m.id as masterId ,m.name ,m.type_detail_id as typeDetailId,
+               d.id as id,
+               d.is_what as isWhat,d.do_what as doWhat,d.learn_what as learnWhat,
+               d.job,
+               d.content,d.course
+        from master m
+        left join master_detail d on m.id = d.master_id
+        where 1 = 1
+        and m.status = 1
+        <if  test="type != null">
+        and m.type = #{type}
+        </if>
+        <if  test="typeDetail != null">
+            and m.type_detail = #{typeDetail}
+        </if>
+        <if  test="levelName != null">
+            and m.level1_name = #{levelName}
+        </if>
+        <if test = "masterName != null">
+            and name like CONCAT('%',#{masterName},'%')
+        </if>
+
+    </select>
+</mapper>

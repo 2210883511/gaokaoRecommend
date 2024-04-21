@@ -1,0 +1,7 @@
+package com.zzuli.gaokao.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.zzuli.gaokao.bean.TypeDetail;
+
+public interface TypeDetailService extends IService<TypeDetail> {
+}

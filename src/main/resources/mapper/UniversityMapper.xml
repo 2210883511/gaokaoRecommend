@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zzuli.gaokao.mapper.UniversityMapper">
+
+    <select id="selectMissId" resultType="java.lang.Integer">
+        SELECT t1.school_id + 1 AS missing_school_id
+        FROM university t1
+                 LEFT JOIN university t2 ON t1.school_id + 1 = t2.school_id
+        WHERE t2.school_id IS NULL
+        ORDER BY t1.school_id;
+    </select>
+
+    <select id="getPages" resultType="com.zzuli.gaokao.bean.University">
+            select school_name from university where province_id = #{id}
+    </select>
+    <select id="test" resultType="java.util.Map">
+            select
+                university.school_id,school_name,city_name,town_name,header_url,
+                tags.f985,tags.f211,tags.school_type_name,tags.school_nature_name,tags.type_name
+            from university
+            inner join university_tags tags on university.school_id = tags.school_id
+    </select>
+
+
+
+</mapper>
