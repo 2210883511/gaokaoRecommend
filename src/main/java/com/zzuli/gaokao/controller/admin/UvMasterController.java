@@ -42,7 +42,7 @@ public class UvMasterController {
 
 
     /*
-     * @Description: 获取高校列表和
+     * @Description: 获取高校列表
      * @Date:   2024/4/17 23:19
      * @Param:  [current, size, provinceId, schoolName]
      * @Return: com.zzuli.gaokao.common.Result
@@ -241,6 +241,23 @@ public class UvMasterController {
 
         uvMasterService.updateById(uvMaster);
         return Result.success("更新成功！");
+    }
+
+    /*
+     * @Description: 根据学校id查询高校包含的专业
+     * @Date:   2024/4/22 21:26
+     * @Param:  [schoolId]
+     * @Return: com.zzuli.gaokao.common.Result
+     */
+    @GetMapping("/getUvMasters")
+    public Result getUvMasterBySchoolId(Integer schoolId){
+
+        List<UniversityMaster> masters = uvMasterService.list(new QueryWrapper<UniversityMaster>()
+                .eq("school_id", schoolId)
+                .select("id,special_name,special_id"));
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("masters",masters);
+        return Result.success(map);
     }
 
     

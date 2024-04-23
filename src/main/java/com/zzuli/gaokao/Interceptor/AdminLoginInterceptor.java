@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zzuli.gaokao.Utils.JwtUtil;
 import com.zzuli.gaokao.Utils.RedisUtil;
 import com.zzuli.gaokao.common.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,6 +17,7 @@ import java.io.PrintWriter;
 
 
 @Component
+@Slf4j
 public class AdminLoginInterceptor implements HandlerInterceptor {
 
     @Autowired
@@ -36,13 +38,16 @@ public class AdminLoginInterceptor implements HandlerInterceptor {
                    return true;
                }
                Result error = Result.error(401,"token无效！");
+               log.warn("拦截器：token无效");
                sendError(error,response);
                return false;
            }
             Result error = Result.error(401,"token无效！");
+            log.warn("拦截器：token无效");
             sendError(error,response);
         }else {
             Result error = Result.error(401,"token不能为空");
+            log.warn("拦截器：token不能为空");
             sendError(error,response);
         }
         return false;
