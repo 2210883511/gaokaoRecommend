@@ -13,10 +13,7 @@ import com.zzuli.gaokao.service.UniversityMasterScoreService;
 import it.unimi.dsi.fastutil.Hash;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -272,5 +269,12 @@ public class UvMasterScoreController {
         return Result.success(data);
     }
 
+
+
+    public Result addUvmScore(@RequestBody UniversityMasterScore uvmMasterScore){
+
+
+        return null;
+    }
 
 }

@@ -209,7 +209,13 @@ public class UvMasterController {
         uvMasterService.save(uvMaster);
         return Result.success("添加成功！");
     }
-
+    
+    /*
+     * @Description: 更新高校专业
+     * @Date:   2024/4/24 19:00
+     * @Param:  [uvMaster]
+     * @Return: com.zzuli.gaokao.common.Result
+     */
     @PostMapping("/updateUniversityMaster")
     public Result updateUniversityMaster(@RequestBody UniversityMaster uvMaster){
         Integer schoolId = uvMaster.getSchoolId();
@@ -257,6 +263,26 @@ public class UvMasterController {
                 .select("id,special_name,special_id"));
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("masters",masters);
+        return Result.success(map);
+    }
+    
+    /*
+     * @Description: 根据学校id 和名称来获取高校专业id
+     * @Date:   2024/4/24 19:06
+     * @Param:  [specialName, schoolId]
+     * @Return: com.zzuli.gaokao.common.Result
+     */
+    @GetMapping("/getUvMasterBySpecialName")
+    public Result getUvMasterBySpecialName(String specialName,Integer schoolId){
+        if(StringUtils.isBlank(specialName) || schoolId == null){
+            return Result.error("参数错误！");
+        }
+        UniversityMaster one = uvMasterService.getOne(new QueryWrapper<UniversityMaster>()
+                .select("id")
+                .eq("school_id", schoolId)
+                .eq("special_name", specialName));
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("specialId",one.getId());
         return Result.success(map);
     }
 
