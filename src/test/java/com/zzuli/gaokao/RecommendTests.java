@@ -2,6 +2,7 @@ package com.zzuli.gaokao;
 
 
 import org.apache.mahout.cf.taste.common.TasteException;
+import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
 import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
 import org.apache.mahout.cf.taste.impl.recommender.svd.ALSWRFactorizer;
 import org.apache.mahout.cf.taste.impl.recommender.svd.Factorization;
@@ -30,30 +31,30 @@ public class RecommendTests {
 
         ClassPathResource resource = new ClassPathResource("/test.txt");
         File file = resource.getFile();
-        FileDataModel model = new FileDataModel(file );
+        FileDataModel model = new FileDataModel(file);
 
         ALSWRFactorizer factorizer = new ALSWRFactorizer(model,5,0.001,100);
         Factorization factorize = factorizer.factorize();
-        double[] userFeatures = factorize.getUserFeatures(1);
         for (double[] doubles : factorize.allItemFeatures()) {
             for (double aDouble : doubles) {
                 System.out.print(aDouble + " ");
             }
             System.out.println();
         }
-
+        LongPrimitiveIterator userIDs = model.getUserIDs();
         SVDRecommender recommender = new SVDRecommender(model,factorizer);
-        List<RecommendedItem> recommend = recommender.recommend(1, 20);
-        for (RecommendedItem recommendedItem : recommend) {
-            System.out.println(recommendedItem.getItemID() + "  " +recommendedItem.getValue());
+        while (userIDs.hasNext()){
+            Long id = userIDs.next();
+            List<RecommendedItem> recommend = recommender.recommend(id, 20);
+            System.out.println("给用户:" + id+ "推荐的大学有：");
+            for (RecommendedItem recommendedItem : recommend) {
+                System.out.println(recommendedItem.getItemID() + "  " +recommendedItem.getValue());
+            }
+
         }
 
 
 
     }
 
-    @Test
-    public void testA(){
-
-    }
 }

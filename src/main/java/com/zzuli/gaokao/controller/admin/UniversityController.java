@@ -225,84 +225,25 @@ public class UniversityController {
         if(schoolId == null){
             return Result.error("高校id为空！");
         }
-
-        University university = universityService.getById(schoolId);
-        UniversityTags tags = universityTagsService.getOne(new QueryWrapper<UniversityTags>().eq("school_id", schoolId));
-        UniversityVo vo = new UniversityVo();
-        vo.setUniversity(university);
-        vo.setTag(tags);
+        UniversityVo vo = universityService.getUniversityVo(schoolId);
         HashMap<String, Object> map = new HashMap<>();
         map.put("universityVo",vo);
         return Result.success(map);
     }
 
+    /*
+     * @Description: 获取高校列表 包括高校基本信息和高校标签，以及高校校园风光
+     * @Date:   2024/4/24 13:23
+     * @Param:  [current, size, provinceId, schoolName]
+     * @Return: com.zzuli.gaokao.common.Result
+     */
     @GetMapping("/getUniversityVoList")
     public Result getUniversityVoList(Integer current,Integer size,Integer provinceId,String schoolName){
         if(current == null || size == null){
             return Result.error("参数错误，current或size为空！");
         }
-        Page<University> page = new Page<>(current, size);
-        QueryWrapper<University> wrapper = new QueryWrapper<>();
-        wrapper.select("school_id","school_name","header_url","town_name","city_name");
-        if(StringUtils.isNotBlank(schoolName)){
-            wrapper.like("school_name",schoolName);
-        }
-        if(provinceId != null){
-            wrapper.eq("province_Id",provinceId);
-        }
-        Page<University> universityPage = universityService.page(page, wrapper);
-        List<University> uvList = universityPage.getRecords();
-        long total = universityPage.getTotal();
-        // 获取ids
-        List<Integer> ids = uvList.stream()
-                .map(University::getSchoolId)
-                .collect(Collectors.toList());
-        List<UniversityTags> tagsList = tagsService.list(new QueryWrapper<UniversityTags>()
-                .in("school_id", ids));
-        List<UniversityImg> imgList = imgService.list(new QueryWrapper<UniversityImg>()
-                .select("school_id", "url")
-                .orderByDesc("rank")
-                .in("school_id", ids)
-        );
-
-        List<UniversityVo> voList = uvList.stream()
-                .map((university) -> {
-                    UniversityVo vo = null;
-                    for (UniversityTags tags : tagsList) {
-                        if (university.getSchoolId().equals(tags.getSchoolId())) {
-                            vo = new UniversityVo();
-                            vo.setSchoolId(university.getSchoolId());
-                            vo.setSchoolName(university.getSchoolName());
-                            vo.setHeaderUrl(university.getHeaderUrl());
-                            vo.setCityName(university.getCityName());
-                            vo.setTownName(university.getTownName());
-                            vo.setF211(tags.getF211());
-                            vo.setF985(tags.getF985());
-                            vo.setDualClassName(tags.getDualClassName());
-                            vo.setTypeName(tags.getTypeName());
-                            break;
-                        }
-                    }
-                    return vo;
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        for (UniversityVo vo : voList) {
-            for (UniversityImg img : imgList) {
-                if(vo.getSchoolId().equals(img.getSchoolId())){
-                    vo.setUrl(img.getUrl());
-                    break;
-                }
-            }
-        }
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("universityVoList",voList);
-        map.put("total",total);
-        return Result.success(map);
+       return universityService.getUniversityVoList(current, size, schoolName, provinceId);
     }
-
-
-
 
 
 }

@@ -26,6 +26,7 @@ import org.apache.mahout.cf.taste.impl.eval.AverageAbsoluteDifferenceRecommender
 import org.apache.mahout.cf.taste.impl.eval.RMSRecommenderEvaluator;
 import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
 import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
+import org.apache.mahout.cf.taste.impl.neighborhood.ThresholdUserNeighborhood;
 import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
 import org.apache.mahout.cf.taste.impl.similarity.EuclideanDistanceSimilarity;
 import org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity;
@@ -33,7 +34,6 @@ import org.apache.mahout.cf.taste.impl.similarity.UncenteredCosineSimilarity;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.Recommender;
-import org.apache.mahout.common.RandomUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -129,7 +129,7 @@ class GaokaoApplicationTests {
     public void recommend() throws TasteException {
         File file = null;
         try {
-            RandomUtils.useTestSeed();
+//            RandomUtils.useTestSeed();
             AverageAbsoluteDifferenceRecommenderEvaluator evaluator = new AverageAbsoluteDifferenceRecommenderEvaluator();
             RMSRecommenderEvaluator rmsRecommenderEvaluator = new RMSRecommenderEvaluator();
             file = new ClassPathResource("/test.txt").getFile();
@@ -152,7 +152,8 @@ class GaokaoApplicationTests {
                     // 找到前100个相似的邻居
 
                     //计算最近邻域，邻居有两种算法，基于固定数量的邻居和基于相似度的邻居，这里使用基于固定数量的邻居
-                    NearestNUserNeighborhood neighborhood = new NearestNUserNeighborhood(2, pearsonCorrelationSimilarity, model);
+                    NearestNUserNeighborhood neighborhood = new NearestNUserNeighborhood(20, cosineSimilarity, model);
+                    ThresholdUserNeighborhood thresholdUserNeighborhood = new ThresholdUserNeighborhood(0, pearsonCorrelationSimilarity, model);
                     return new GenericUserBasedRecommender(model, neighborhood, similarity);
                 }
             };
@@ -169,15 +170,17 @@ class GaokaoApplicationTests {
                 BufferedWriter bufferedWriter = new BufferedWriter(writer);
                 while (userIDs.hasNext()){
                     Long id = userIDs.next();
-                    List<RecommendedItem> recommend = recommender.recommend(id, 5);
+                    List<RecommendedItem> recommend = recommender.recommend(id, 20);
 
                     StringBuilder builder = new StringBuilder();
                     builder.append("给用户" + id +"推荐的大学有：\n");
+                    System.out.println("给用户" + id +"推荐的大学有：\n");
                     for (RecommendedItem item : recommend) {
                         long itemID = item.getItemID();
                         float predict = item.getValue();
                         String schoolName = universityMapper.selectById(itemID).getSchoolName();
                         builder.append(schoolName + "\t预测喜欢值：\t" + predict + "\n");
+                        System.out.println(schoolName + "\t预测喜欢值：\t" + predict + "\n");
                     }
                     bufferedWriter.write(builder.toString());
                     writer.flush();

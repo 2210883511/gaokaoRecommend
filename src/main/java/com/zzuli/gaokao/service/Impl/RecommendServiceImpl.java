@@ -15,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
@@ -34,9 +33,6 @@ public class RecommendServiceImpl {
 
     
     public Result getRecommend(Integer id) throws IOException {
-        FileWriter writer = new FileWriter("./src/main/resources/university.txt");
-        BufferedWriter bufferedWriter = new BufferedWriter(writer);
-
         WordVectorModel wordVectorModel = new WordVectorModel("./src/main/resources/ok.txt");
         DocVectorModel model = new DocVectorModel(wordVectorModel);
         List<University> universityList = universityMapper.selectList(null);

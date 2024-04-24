@@ -17,8 +17,14 @@ public class RecommendController {
     private RecommendServiceImpl recommendService;
 
 
+
+
     @GetMapping("/recommend")
     public Result getRecommend(Integer id) throws IOException {
+
         return recommendService.getRecommend(id);
     }
+
+
+
 }
