@@ -3,6 +3,7 @@ package com.zzuli.gaokao.bean;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -53,6 +54,7 @@ public class UniversityMasterScore {
     private String sgInfo;
 
 
+    @TableLogic(delval = "2",value = "1")
     private Integer status;
 
 

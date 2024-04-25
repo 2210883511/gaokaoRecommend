@@ -10,7 +10,6 @@ import com.zzuli.gaokao.common.Result;
 import com.zzuli.gaokao.service.DicService;
 import com.zzuli.gaokao.service.ProvincesService;
 import com.zzuli.gaokao.service.UniversityMasterScoreService;
-import it.unimi.dsi.fastutil.Hash;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -270,11 +269,115 @@ public class UvMasterScoreController {
     }
 
 
+    
+    /*
+     * @Description: 添加专业分数线
+     * @Date:   2024/4/25 13:07
+     * @Param:  [uvMasterScore]
+     * @Return: com.zzuli.gaokao.common.Result
+     */
+    @PostMapping("/addUvmScore")
+    public Result addUvmScore(@RequestBody UniversityMasterScore uvMasterScore){
+        Integer year = uvMasterScore.getYear();
+        String spname = uvMasterScore.getSpname();
+        String localBatchName = uvMasterScore.getLocalBatchName();
+        Integer type = uvMasterScore.getType();
+        Integer provinceId = uvMasterScore.getProvinceId();
+        Integer specialId = uvMasterScore.getSpecialId();
+        Integer schoolId = uvMasterScore.getSchoolId();
+        if(schoolId == null){
+            return Result.error("高校id不能为空！");
+        }
+        if(year == null || type == null){
+            return Result.error("年份和类型不能为空！");
+        }
 
-    public Result addUvmScore(@RequestBody UniversityMasterScore uvmMasterScore){
+        if(provinceId == null || specialId == null){
+            return Result.error("省份和专业id不能为空！");
+        }
 
+        if(StringUtils.isBlank(spname)){
+            return Result.error("专业名称不能为空！");
+        }
+        if(StringUtils.isBlank(localBatchName)){
+            return Result.error("批次不能为空！");
+        }
+        UniversityMasterScore one = service.getOne(new QueryWrapper<UniversityMasterScore>()
+                .eq("school_id",schoolId)
+                .eq("province_id",provinceId)
+                .eq("year", year)
+                .eq("spname", spname)
+                .eq("type",type));
 
-        return null;
+        if(one != null){
+            return Result.error("该专业在该省份的"+year+"年已经添加过了！");
+        }
+        uvMasterScore.setStatus(1);
+
+        service.save(uvMasterScore);
+
+        return Result.success("添加成功！");
     }
+    
+    /*
+     * @Description: 根据id删除专业分数线
+     * @Date:   2024/4/25 13:07
+     * @Param:  [id]
+     * @Return: com.zzuli.gaokao.common.Result
+     */
+    @PostMapping("/deleteUvmScore")
+    public Result deleteUvmScore(Integer id){
+        service.removeById(id);
+        return Result.success("删除成功！");
+    }
+    
+    /*
+     * @Description: 更新专业分数线
+     * @Date:   2024/4/25 13:07
+     * @Param:  [uvMasterScore]
+     * @Return: com.zzuli.gaokao.common.Result
+     */
+    @PostMapping("/updateUvmScore")
+    public Result updateUvmScore(@RequestBody UniversityMasterScore uvMasterScore){
+        Integer year = uvMasterScore.getYear();
+        String spname = uvMasterScore.getSpname();
+        String localBatchName = uvMasterScore.getLocalBatchName();
+        Integer type = uvMasterScore.getType();
+        Integer provinceId = uvMasterScore.getProvinceId();
+        Integer specialId = uvMasterScore.getSpecialId();
+        Integer schoolId = uvMasterScore.getSchoolId();
+        if(schoolId == null){
+            return Result.error("高校id不能为空！");
+        }
+        if(year == null || type == null){
+            return Result.error("年份和类型不能为空！");
+        }
+
+        if(provinceId == null || specialId == null){
+            return Result.error("省份和专业id不能为空！");
+        }
+
+        if(StringUtils.isBlank(spname)){
+            return Result.error("专业名称不能为空！");
+        }
+
+        if(StringUtils.isBlank(localBatchName)){
+            return Result.error("批次不能为空！");
+        }
+        UniversityMasterScore one = service.getOne(new QueryWrapper<UniversityMasterScore>()
+                .eq("school_id",schoolId)
+                .eq("province_id",provinceId)
+                .eq("year", year)
+                .eq("spname", spname)
+                .eq("type",type));
+
+        if(one != null && !one.getId().equals(uvMasterScore.getId())){
+            return Result.error("记录已经存在了，请重新选择");
+        }
+        service.updateById(uvMasterScore);
+        return Result.success("更新成功！");
+
+    }
+
 
 }
