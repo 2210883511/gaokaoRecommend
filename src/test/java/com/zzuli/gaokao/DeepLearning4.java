@@ -26,7 +26,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
-
 @SpringBootTest
 public class DeepLearning4 {
 
@@ -138,5 +137,8 @@ public class DeepLearning4 {
             System.out.println("高校id: " + id + " 高校名称： " + university.getSchoolName() +  " 相似度: " + value);
         }
     }
+
+
+
 
 }

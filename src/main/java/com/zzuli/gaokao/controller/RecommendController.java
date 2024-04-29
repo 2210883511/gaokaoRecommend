@@ -25,6 +25,12 @@ public class RecommendController {
         return recommendService.getRecommend(id);
     }
 
+    @GetMapping("/recommendByContent")
+    public Result getRecommend(String document) throws IOException {
+
+        return recommendService.getRecommend(document);
+    }
+
 
 
 }

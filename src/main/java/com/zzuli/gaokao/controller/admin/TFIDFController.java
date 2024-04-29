@@ -1,48 +1,26 @@
-package com.zzuli.gaokao;
+package com.zzuli.gaokao.controller.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hankcs.hanlp.mining.word.WordInfo;
-import com.hankcs.hanlp.mining.word2vec.DocVectorModel;
-import com.hankcs.hanlp.mining.word2vec.Word2VecTrainer;
-import com.hankcs.hanlp.mining.word2vec.WordVectorModel;
-import com.hankcs.hanlp.seg.Segment;
-import com.zzuli.gaokao.bean.*;
-import com.zzuli.gaokao.mapper.*;
-import com.zzuli.gaokao.vo.StopWords;
-import com.zzuli.gaokao.vo.TfIdfVo;
-import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.RealVector;
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.hankcs.hanlp.HanLP;
-import com.hankcs.hanlp.classification.features.TfIdfFeatureWeighter;
-import com.hankcs.hanlp.mining.word.TfIdf;
 import com.hankcs.hanlp.mining.word.TfIdfCounter;
-
 import com.hankcs.hanlp.seg.common.Term;
-import com.hankcs.hanlp.tokenizer.StandardTokenizer;
+import com.zzuli.gaokao.bean.Provinces;
+import com.zzuli.gaokao.bean.University;
+import com.zzuli.gaokao.bean.UniversityInfo;
+import com.zzuli.gaokao.bean.UniversityTags;
+import com.zzuli.gaokao.common.Result;
+import com.zzuli.gaokao.mapper.*;
+import com.zzuli.gaokao.vo.TfIdfVo;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.mahout.math.SequentialAccessSparseVector;
-import org.apache.mahout.vectorizer.TFIDF;
-import org.apache.mahout.vectorizer.tfidf.TFIDFPartialVectorReducer;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
-@SpringBootTest
-public class HanlpTest {
-
-
+@RestController
+public class TFIDFController {
     @Autowired
     private UniversityTagsMapper mapper;
 
@@ -58,17 +36,13 @@ public class HanlpTest {
     @Autowired
     private UniversityProfileMapper profileMapper;
 
-    @Autowired
-    private StopWords stopWords;
 
-    @Test
-    public void get  () throws IOException {
 
+    @GetMapping("/getTfIdf")
+    public Result getAllProfile() {
         List<UniversityTags> universityTags = mapper.selectList(null);
-        StringBuilder tem  = null;
-        FileWriter writer = new FileWriter("./src/main/resources/train.txt");
-        BufferedWriter bufferedWriter = new BufferedWriter(writer);
-
+        StringBuilder tem = null;
+        TfIdfCounter counter = new TfIdfCounter();
         for (UniversityTags universityTag : universityTags) {
             University university = universityMapper.selectById(universityTag.getSchoolId());
             Provinces provinces = provincesMapper.selectById(university.getProvinceId());
@@ -116,10 +90,7 @@ public class HanlpTest {
             }
             if (!StringUtils.isBlank(schoolName)) {
                 for (Term term : HanLP.segment(schoolName)) {
-                    if(!stopWords.isContainKey(term.word)){
-                        tem.append(term.word).append(" ");
-                    }
-
+                    tem.append(term.word).append(" ");
                 }
             }
 
@@ -128,50 +99,40 @@ public class HanlpTest {
             }
             if (!StringUtils.isBlank(content)) {
                 for (Term term : HanLP.segment(content)) {
-                    if(!stopWords.isContainKey(term.word)){
-                        tem.append(term.word).append(" ");
-                    }
+                    tem.append(term.word).append(" ");
                 }
             }
-
-            String s = tem.toString();
-            bufferedWriter.write(s+"\n");
-            writer.flush();
+            String s = tem.toString().replaceAll("，", " ")
+                    .replaceAll("。", " ")
+                    .replaceAll("（", " ")
+                    .replaceAll("）", " ")
+                    .replaceAll("——", " ")
+                    .replaceAll("；", " ");
+            counter.add(universityTag.getSchoolId(),s);
         }
-    }
+        List<Integer> schoolIds = universityTags.stream()
+                .map(UniversityTags::getSchoolId)
+                .collect(Collectors.toList());
 
-
-
-    @Test
-    public void test(){
-        TfIdfCounter counter = new TfIdfCounter();
-    }
-
-
-/*
- * @Description: 将得到tf-idf标签和权重存储到数据库，为高校画像
- * @Date:   2024/3/27 20:07
- * @Param:  [list, tfidf, profileMapper]
- * @Return: void
- */
-    public static void insertInfo(List<University> list,Map<Object,Map<String,Double>> tfidf,UniversityProfileMapper profileMapper){
-//         用于将标签和权重添加到数据库中
-        int i = 0;
-        for (Map<String, Double> value : tfidf.values()) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            University university = list.get(i);
-            try {
-                String json = objectMapper.writeValueAsString(value);
-                UniversityProfile profile = new UniversityProfile();
-                profile.setSchoolId(university.getSchoolId());
-                profile.setSchoolName(university.getSchoolName());
-                profile.setTags(json);
-                profileMapper.insert(profile);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+        Map<Object, Map<String, Double>> compute = counter.compute();
+        ArrayList<TfIdfVo> list = new ArrayList<>();
+        List<Integer> collect = schoolIds.stream()
+                .filter(x -> x <= 100)
+                .collect(Collectors.toList());
+        for (Integer schoolId : collect) {
+            Map<String, Double> map = compute.get(schoolId);
+            for (String s : map.keySet()) {
+                TfIdfVo vo = new TfIdfVo();
+                vo.setName(s);
+                vo.setValue(map.get(s));
+                list.add(vo);
             }
-            i++;
         }
-    }
+        list.sort((o1, o2) -> (int) (o1.getValue() - o2.getValue()));
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("list",list);
+        return Result.success(map);
 
+
+    }
 }
