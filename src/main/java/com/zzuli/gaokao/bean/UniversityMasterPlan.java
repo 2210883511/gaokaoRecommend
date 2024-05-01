@@ -12,23 +12,21 @@ public class UniversityMasterPlan {
 
     @TableId
     private Integer id;
-    @JsonProperty("spe_id")
+//    @JsonProperty("spe_id")
     private Integer specialId;
-    @JsonProperty("province")
+//    @JsonProperty("province")
     private Integer provinceId;
-    @JsonProperty("school_id")
+//    @JsonProperty("school_id")
     private Integer schoolId;
     private Integer type;
     private String num;
     private String tuition;
     private String length;
     private String spname;
-    @JsonProperty("local_batch_name")
+//    @JsonProperty("local_batch_name")
     private String localBatchName;
     private Integer year;
     private String sgInfo;
     @TableLogic(delval = "2",value = "1")
     private Integer status;
-
-
 }
