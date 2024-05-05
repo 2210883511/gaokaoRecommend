@@ -38,6 +38,8 @@ public class User {
 
     private String salt;
 
+    private String profile;
+
     @TableLogic(value = "1",delval = "2")
     private Integer status;
 

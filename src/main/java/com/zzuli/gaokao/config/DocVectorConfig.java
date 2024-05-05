@@ -18,7 +18,7 @@ public class DocVectorConfig {
 
     @Value("${gaokao.loadPath}")
     String path;
-    private final Log log = LogFactory.getLog(DocVectorConfig.class);
+    private final static Log log = LogFactory.getLog(DocVectorConfig.class);
 
     /*
      * @Description: 装载数据集

@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -54,8 +56,12 @@ public class AdminLoginInterceptor implements HandlerInterceptor {
     }
 
 
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        
+    }
 
-    private void sendError(Result result,HttpServletResponse response) throws IOException {
+    private void sendError(Result result, HttpServletResponse response) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         String data = objectMapper.writeValueAsString(result);
         response.setStatus(200);

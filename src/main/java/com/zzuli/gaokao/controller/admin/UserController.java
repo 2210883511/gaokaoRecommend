@@ -2,19 +2,26 @@ package com.zzuli.gaokao.controller.admin;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zzuli.gaokao.Utils.CommonUtils;
 import com.zzuli.gaokao.Utils.HeaderUtil;
 import com.zzuli.gaokao.bean.User;
 import com.zzuli.gaokao.common.Result;
 import com.zzuli.gaokao.service.Impl.UserServiceImpl;
+import com.zzuli.gaokao.vo.TfIdfVo;
+import it.unimi.dsi.fastutil.Hash;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -192,6 +199,55 @@ public class UserController {
         return Result.success(map);
     }
 
+
+    @PostMapping("/updateProfile")
+    public Result updateProfile(Integer userId, @RequestBody ArrayList<TfIdfVo> tfIdfVos){
+        if(userId == null){
+            return Result.error("参数错误！");
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = null;
+        try {
+             json = objectMapper.writeValueAsString(tfIdfVos);
+        } catch (JsonProcessingException e) {
+            log.error("json写入失败！");
+        }
+        userService.update(new UpdateWrapper<User>()
+                .eq("id",userId)
+                .set("profile",json));
+
+        return Result.success("更新成功！");
+    }
+
+    @GetMapping("/getUserProfile")
+    public Result getProfile(Integer userId){
+
+        if(userId == null){
+            return Result.error("参数错误！");
+        }
+        User one = userService.getOne(new QueryWrapper<User>()
+                .eq("id", userId)
+                .select("profile"));
+        HashMap<String, Object> map = new HashMap<>();
+        if(one != null){
+            String profile = one.getProfile();
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            ArrayList arrayList = null;
+            try {
+                arrayList = objectMapper.readValue(profile, ArrayList.class);
+            } catch (JsonProcessingException e) {
+                log.error("json解析失败！");
+            }
+
+            map.put("userProfile",arrayList);
+        }else {
+            map.put("userProfile",null);
+
+        }
+
+        return Result.success(map);
+    }
 
 
 }

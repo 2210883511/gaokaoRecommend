@@ -5,6 +5,12 @@ import com.zzuli.gaokao.bean.UniversityTags;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/*
+ * @Description: 用于构建管理端的高校界面Vo
+ * @Date:   2024/5/4 19:49
+ * @Param:  
+ * @Return: 
+ */
 @Data
 @NoArgsConstructor
 public class UniversityVo {
