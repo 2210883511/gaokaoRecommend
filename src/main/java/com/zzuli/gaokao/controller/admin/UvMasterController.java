@@ -25,7 +25,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/admin/uvMaster")
 public class UvMasterController {
 
     @Autowired
@@ -47,7 +46,7 @@ public class UvMasterController {
      * @Param:  [current, size, provinceId, schoolName]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getVoList")
+    @GetMapping("/admin/uvMaster/getVoList")
     public Result getUniversityVo(Integer current,Integer size,Integer provinceId,String schoolName){
         Page<University> page = new Page<>(current, size);
         QueryWrapper<University> wrapper = new QueryWrapper<>();
@@ -103,7 +102,7 @@ public class UvMasterController {
      * @Param:  []
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getUvMasterVoList")
+    @GetMapping(value = {"/admin/uvMaster/getUvMasterVoList","/api/uvMaster/getUvMasterVoList"})
     public Result getUvMasterVo(Integer current,Integer size,Integer schoolId,String masterName,String level1Name,String type,String typeDetail){
 
         QueryWrapper<UniversityMaster> wrapper = new QueryWrapper<UniversityMaster>()
@@ -172,7 +171,7 @@ public class UvMasterController {
 
 
 
-    @PostMapping("/delete/{id}")
+    @PostMapping("/admin/uvMaster/delete/{id}")
     public Result deleteUniversityMaster(@PathVariable Integer id){
         uvMasterService.removeById(id);
         return Result.success("删除成功！");
@@ -180,7 +179,7 @@ public class UvMasterController {
 
 
 
-    @PostMapping("/addUniversityMaster")
+    @PostMapping("/admin/uvMaster/addUniversityMaster")
     public Result addUniversityMaster(@RequestBody UniversityMaster uvMaster){
         Integer specialId = uvMaster.getSpecialId();
         String specialName = uvMaster.getSpecialName();
@@ -216,7 +215,7 @@ public class UvMasterController {
      * @Param:  [uvMaster]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @PostMapping("/updateUniversityMaster")
+    @PostMapping("/admin/uvMaster/updateUniversityMaster")
     public Result updateUniversityMaster(@RequestBody UniversityMaster uvMaster){
         Integer schoolId = uvMaster.getSchoolId();
         Integer specialId = uvMaster.getSpecialId();
@@ -255,7 +254,7 @@ public class UvMasterController {
      * @Param:  [schoolId]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getUvMasters")
+    @GetMapping("/admin/uvMaster/getUvMasters")
     public Result getUvMasterBySchoolId(Integer schoolId){
 
         List<UniversityMaster> masters = uvMasterService.list(new QueryWrapper<UniversityMaster>()
@@ -272,7 +271,7 @@ public class UvMasterController {
      * @Param:  [specialName, schoolId]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getUvMasterBySpecialName")
+    @GetMapping("/admin/uvMaster/getUvMasterBySpecialName")
     public Result getUvMasterBySpecialName(String specialName,Integer schoolId){
         if(StringUtils.isBlank(specialName) || schoolId == null){
             return Result.error("参数错误！");

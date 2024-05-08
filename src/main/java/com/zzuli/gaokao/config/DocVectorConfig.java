@@ -26,7 +26,6 @@ public class DocVectorConfig {
      * @Param:  []
      * @Return: com.hankcs.hanlp.mining.word2vec.DocVectorModel
      */
-    @Bean
     public DocVectorModel loadModel(){
 
         try {

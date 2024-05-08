@@ -51,6 +51,5 @@ public class UniversityVo {
         this.setF985(tag.getF985());
         this.setF211(tag.getF211());
         this.setDualClassName(tag.getDualClassName());
-
     }
 }

@@ -51,51 +51,19 @@ public class SchoolHandler {
      * @Return: com.zzuli.gaokao.common.Result
      */
     @GetMapping("/schoolList")
-    public Result getSchoolList(Integer page, Integer size,Integer f985,Integer f211,String dualClassName,String typeName){
-
-        Page<UniversityTags> pageTags = new Page<>(page,size);
-        QueryWrapper<UniversityTags> tagsQueryWrapper = new QueryWrapper<>();
-        if(f985 != null){
-            tagsQueryWrapper.eq("f985",f985);
+    public Result getSchoolList(Integer page, Integer size,Integer f985,Integer f211,String dualClassName,String typeName,
+    String schoolName,Integer provinceId){
+        if(page == null || size == null){
+            return Result.error("参数错误！page或size为空!");
         }
-        if(f211 != null){
-            tagsQueryWrapper.eq("f211",f211);
-        }
-        if(StringUtils.isNotBlank(dualClassName)){
-            tagsQueryWrapper.eq("dual_class_name",dualClassName);
-        }
-        if(StringUtils.isNotBlank(typeName)){
-            tagsQueryWrapper.eq("type_name",typeName);
-        }
-        Page<UniversityTags> tagsPage = universityTagsService.page(pageTags, tagsQueryWrapper);
-        List<UniversityTags> tagsList = tagsPage.getRecords();
-        long total = tagsPage.getTotal();
-        List<Integer> ids = tagsList.stream()
-                .map(UniversityTags::getSchoolId)
-                .collect(Collectors.toList());
-
-        if(ids.isEmpty()){
-            return Result.error("未查询到数据！");
-        }
-        List<University> universityList = universityService.list(new QueryWrapper<University>()
-                .select("school_id","school_name","city_name","town_name","header_url")
-                .in("school_id", ids));
-        ArrayList<UniversityVo> list = new ArrayList<>();
-        for (UniversityTags tags : tagsList) {
-            for (University university : universityList) {
-                if (university.getSchoolId().equals(tags.getSchoolId())){
-                    UniversityVo vo = new UniversityVo();
-                    vo.setUniversity(university);
-                    vo.setTag(tags);
-                    list.add(vo);
-                    break;
-                }
-            }
-        }
-        HashMap<String, Object> data = new HashMap<>();
-        data.put("list",list);
-        data.put("total",total);
-        return  Result.success(data);
+        Page<UniversityVo> voPage = new Page<>(page,size);
+        Page<UniversityVo> universityVoPage = universityService.selectCustom(voPage, f985, f211, dualClassName, typeName, schoolName, provinceId);
+        List<UniversityVo> list = universityVoPage.getRecords();
+        long total = universityVoPage.getTotal();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("list",list);
+        map.put("total",total);
+        return  Result.success(map);
     }
 
 
@@ -130,5 +98,9 @@ public class SchoolHandler {
         map.put("vo",vo);
         return Result.success(map);
     }
+
+
+
+
 
 }

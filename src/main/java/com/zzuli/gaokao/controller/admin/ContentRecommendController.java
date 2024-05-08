@@ -10,11 +10,9 @@ import com.hankcs.hanlp.mining.word2vec.DocVectorModel;
 import com.hankcs.hanlp.mining.word2vec.Word2VecTrainer;
 import com.hankcs.hanlp.mining.word2vec.WordVectorModel;
 import com.hankcs.hanlp.seg.common.Term;
-import com.zzuli.gaokao.bean.Provinces;
-import com.zzuli.gaokao.bean.University;
-import com.zzuli.gaokao.bean.UniversityInfo;
-import com.zzuli.gaokao.bean.UniversityTags;
+import com.zzuli.gaokao.bean.*;
 import com.zzuli.gaokao.common.Result;
+import com.zzuli.gaokao.mapper.UniversityImgMapper;
 import com.zzuli.gaokao.service.ProvincesService;
 import com.zzuli.gaokao.service.UniversityInfoService;
 import com.zzuli.gaokao.service.UniversityService;
@@ -22,6 +20,7 @@ import com.zzuli.gaokao.service.UniversityTagsService;
 import com.zzuli.gaokao.vo.StopWords;
 import com.zzuli.gaokao.vo.TfIdfVo;
 import com.zzuli.gaokao.vo.UniversityDataVo;
+import com.zzuli.gaokao.vo.UniversityVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +56,13 @@ public class ContentRecommendController {
     private UniversityInfoService infoService;
 
     @Autowired
+    private UniversityImgMapper imgMapper;
+
+    @Autowired
     private StopWords stopWords;
+
+    @Autowired
+    private DocVectorModel model;
     
     
     /*
@@ -270,6 +275,55 @@ public class ContentRecommendController {
         return Result.success(map);
 
     }
+
+
+    @GetMapping("/recommendList")
+    public Result getRecommend(Integer schoolId){
+
+        List<Map.Entry<Integer, Float>> nearest = model.nearest(schoolId, 30);
+        ArrayList<Integer> ids = new ArrayList<>();
+        for (Map.Entry<Integer, Float> integerFloatEntry : nearest) {
+            Integer key = integerFloatEntry.getKey();
+            ids.add(key);
+        }
+        ArrayList<UniversityVo> voList = new ArrayList<>();
+        if(!ids.isEmpty()){
+            List<UniversityTags> tagsList = tagsService.list(new QueryWrapper<UniversityTags>()
+                    .in("school_id", ids));
+            List<University> universityList = universityService.list(new QueryWrapper<University>()
+                    .in("school_id", ids));
+            List<UniversityImg> imgList = imgMapper.selectList(new QueryWrapper<UniversityImg>()
+                    .select("school_id", "url")
+                    .orderByDesc("rank")
+                    .in("school_id", ids));
+            for (University university : universityList) {
+                for (UniversityTags tags : tagsList) {
+                    if(university.getSchoolId().equals(tags.getSchoolId())){
+                        UniversityVo vo = new UniversityVo();
+                        vo.setUniversity(university);
+                        vo.setTag(tags);
+                        voList.add(vo);
+                        break;
+                    }
+                }
+            }
+            for (UniversityVo vo : voList) {
+                for (UniversityImg img : imgList) {
+                    if(vo.getSchoolId().equals(img.getSchoolId())){
+                        vo.setUrl(img.getUrl());
+                        break;
+                    }
+                }
+            }
+        }
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("recommendList",voList);
+        return Result.success(map);
+    }
+
+
+
+
 
 
 }

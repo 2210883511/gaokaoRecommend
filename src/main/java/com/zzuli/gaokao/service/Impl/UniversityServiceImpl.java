@@ -118,7 +118,7 @@ public class UniversityServiceImpl extends ServiceImpl<UniversityMapper, Univers
             return Result.success(map);
         }
 
-        /*
+    /*
          * @Description: 获取单个的universityVo
          * @Date:   2024/4/24 13:45
          * @Param:  
@@ -184,7 +184,19 @@ public class UniversityServiceImpl extends ServiceImpl<UniversityMapper, Univers
         return voList;
     }
 
+    @Override
+    public Page<UniversityVo> selectCustom(Page<UniversityVo> page, Integer f985, Integer f211, String dualClassName, String typeName, String schoolName, Integer provinceId) {
 
+            if(StringUtils.isBlank(dualClassName)){
+                dualClassName = null;
+            }
+            if(StringUtils.isBlank(typeName)){
+                typeName = null;
+            }
+            if(StringUtils.isBlank(schoolName)){
+                schoolName = null;
+            }
 
-
+       return universityMapper.selectCustom(page,f985,f211,dualClassName,typeName,schoolName,provinceId);
+    }
 }

@@ -26,10 +26,8 @@ public class UniversityDataVo {
     private String dualClassName;
     private String typeName;  // 综合类大学
 
-
     private String content;
     private String belong;
-
     private String provinceName;
 
 

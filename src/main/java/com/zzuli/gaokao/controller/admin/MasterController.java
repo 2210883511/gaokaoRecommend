@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@RequestMapping("/admin/master")
 public class MasterController {
 
     @Autowired
@@ -27,9 +26,7 @@ public class MasterController {
 
     @Autowired
     private TagsService tagsService;
-
-
-    @GetMapping("/getMasters")
+    @GetMapping(value = {"/admin/master/getMasters","/api/master/getMasters"})
     public Result getMasters(Integer current, Integer size, String masterName,String type,String typeDetail,String levelName){
         Page<Master> page = new Page<>(current, size);
         QueryWrapper<Master> wrapper = new QueryWrapper<>();
@@ -51,7 +48,7 @@ public class MasterController {
         return Result.success(map);
     }
 
-    @GetMapping("/getTags")
+    @GetMapping(value = {"/admin/master/getTags","/api/master/getTags"})
     public Result getTags(String schoolType){
         List<String> levelNames = new ArrayList<>();
         if(StringUtils.isNotBlank(schoolType)){
@@ -99,7 +96,7 @@ public class MasterController {
     }
 
 
-    @PostMapping("/addMaster")
+    @PostMapping("/admin/master/addMaster")
     public Result addMaster(@RequestBody Master master){
 
 
@@ -146,13 +143,13 @@ public class MasterController {
         return Result.success("保存成功！");
     }
 
-    @PostMapping("/delete/{id}")
+    @PostMapping("/admin/master/delete/{id}")
     public Result deleteMaster(@PathVariable("id") Integer id){
         masterService.removeById(id);
         return Result.success("删除成功！");
     }
 
-    @PostMapping("/updateMaster")
+    @PostMapping("/admin/master/updateMaster")
     public Result updateMaster(@RequestBody Master master){
         String name = master.getName();
         String code = master.getCode();
@@ -187,7 +184,7 @@ public class MasterController {
      * @Param:  [id]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getOne/{id}")
+    @GetMapping("/admin/master/getOne/{id}")
     public Result getOneMaster(@PathVariable("id") Integer id){
 
         Master master = masterService.getById(id);
@@ -199,7 +196,7 @@ public class MasterController {
         return Result.success(map);
     }
 
-    @GetMapping("/getSpecialList")
+    @GetMapping("/admin/master/getSpecialList")
     public Result getOneMaster(String levelName,String type,String typeDetail){
         if(StringUtils.isBlank(levelName) && StringUtils.isBlank(type) && StringUtils.isBlank(typeDetail)){
             return Result.error("参数错误！");

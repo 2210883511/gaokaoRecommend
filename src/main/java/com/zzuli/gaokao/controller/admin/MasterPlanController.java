@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/admin/masterPlan")
 public class MasterPlanController {
 
     @Autowired
@@ -39,7 +38,7 @@ public class MasterPlanController {
      * @Param:  [schoolId]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getYears")
+    @GetMapping(value={"/admin/masterPlan/getYears","/api/masterPlan/getYears"})
     public Result getYears(Integer schoolId){
         if(schoolId == null){
             return Result.error("参数错误！");
@@ -70,7 +69,7 @@ public class MasterPlanController {
      * @Param:  [schoolId, year]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getProvinces")
+    @GetMapping(value={"/admin/masterPlan/getProvinces","/api/masterPlan/getProvinces"})
     public Result getProvinces(Integer schoolId,Integer year){
         if(schoolId == null || year == null){
             return Result.error("参数错误！");
@@ -98,7 +97,7 @@ public class MasterPlanController {
      * @Param:  [schoolId, provinceId, year]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getTypes")
+    @GetMapping(value={"/admin/masterPlan/getTypes","/api/masterPlan/getTypes"})
     public Result getType(Integer schoolId,Integer provinceId,Integer year){
 
         if(schoolId == null || provinceId == null || year == null){
@@ -126,7 +125,7 @@ public class MasterPlanController {
      * @Param:  [schoolId, provinceId, year]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getBatch")
+    @GetMapping(value={"/admin/masterPlan/getBatch","/api/masterPlan/getBatch"})
     public Result getBatch(Integer schoolId,Integer provinceId,String year,Integer type){
 
         if(schoolId == null || provinceId == null || StringUtils.isBlank(year) || type == null) {
@@ -158,7 +157,7 @@ public class MasterPlanController {
      * @Param:  [current, size, type, batch, provinceId, schoolId, year]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getMasterPlan/{schoolId}/{provinceId}/{year}")
+    @GetMapping(value={"/admin/masterPlan/getMasterPlan/{schoolId}/{provinceId}/{year}","/api/masterPlan/getMasterPlan/{schoolId}/{provinceId}/{year}"})
     public Result getMasterScore(Integer current, Integer size, Integer type, String batch, @PathVariable String provinceId, @PathVariable String schoolId, @PathVariable String year){
         if(current == null || size == null){
             return Result.error("参数错误！");
@@ -201,7 +200,7 @@ public class MasterPlanController {
      * @Param:  [provinceId]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getAllType")
+    @GetMapping("/admin/masterPlan/getAllType")
     public Result getAllTypeByProvinceId(Integer provinceId){
         if(provinceId == null){
             return Result.error("省份id为空！");
@@ -229,7 +228,7 @@ public class MasterPlanController {
      * @Param:  [type]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getAllBatch")
+    @GetMapping("/admin/masterPlan/getAllBatch")
     public Result getAllBatch(Integer type){
         if(type == null){
             return Result.error("type参数为空！");
@@ -256,7 +255,7 @@ public class MasterPlanController {
      * @Param:  [uvMasterScore]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @PostMapping("/addUvmPlan")
+    @PostMapping("/admin/masterPlan/addUvmPlan")
     public Result addUvmScore(@RequestBody UniversityMasterPlan masterPlan){
         Integer year = masterPlan.getYear();
         String spname = masterPlan.getSpname();
@@ -310,7 +309,7 @@ public class MasterPlanController {
      * @Return: com.zzuli.gaokao.common.Result
      */
 
-    @PostMapping("/deleteUvmPlan")
+    @PostMapping("/admin/masterPlan/deleteUvmPlan")
     public Result deleteUvmScore(Integer id){
         masterPlanService.removeById(id);
         return Result.success("删除成功！");
@@ -322,7 +321,7 @@ public class MasterPlanController {
      * @Param:  [uvMasterScore]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @PostMapping("/updateUvmPlan")
+    @PostMapping("/admin/masterPlan/updateUvmPlan")
     public Result updateUvmScore(@RequestBody UniversityMasterPlan masterPlan){
         Integer year = masterPlan.getYear();
         String spname = masterPlan.getSpname();
@@ -360,7 +359,6 @@ public class MasterPlanController {
                 .eq("year", year)
                 .eq("spname", spname)
                 .eq("type",type));
-
         if(one != null && !one.getId().equals(masterPlan.getId())){
             return Result.error("记录已经存在了，请重新选择");
         }
@@ -368,12 +366,6 @@ public class MasterPlanController {
         return Result.success("更新成功！");
 
     }
-
-
-
-
-
-
 
 
 

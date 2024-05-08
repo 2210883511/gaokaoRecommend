@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RestController
-@RequestMapping("/admin/provinceScore")
 public class UniversityProvinceScoreController {
 
 
@@ -42,7 +41,7 @@ public class UniversityProvinceScoreController {
      * @Param:  [schoolId]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getYears")
+    @GetMapping(value={"/admin/provinceScore/getYears","/api/provinceScore/getYears"})
     public Result getYear(Integer schoolId){
 
         if(schoolId == null){
@@ -71,7 +70,7 @@ public class UniversityProvinceScoreController {
      * @Param:  [schoolId, year]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getProvinces")
+    @GetMapping(value={"/admin/provinceScore/getProvinces","/api/provinceScore/getProvinces"})
     public Result getProvinces(Integer schoolId,Integer year){
         if(schoolId == null || year == null){
             return Result.error("高校id或者年份参数为空！");
@@ -97,7 +96,7 @@ public class UniversityProvinceScoreController {
      * @Param:  [schoolId, provinceId, year]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getTypes")
+    @GetMapping(value={"/admin/provinceScore/getTypes","/api/provinceScore/getTypes"})
     public Result getType(Integer schoolId,Integer provinceId,Integer year){
 
         if(schoolId == null || provinceId == null || year == null){
@@ -124,7 +123,7 @@ public class UniversityProvinceScoreController {
      * @Param:  [provinceId]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getAllType")
+    @GetMapping("/admin/provinceScore/getAllType")
     public Result getAllTypeByProvinceId(Integer provinceId){
         if(provinceId == null){
             return Result.error("省份id为空！");
@@ -150,7 +149,7 @@ public class UniversityProvinceScoreController {
      * @Param:  [type]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getAllBatch")
+    @GetMapping("/admin/provinceScore/getAllBatch")
     public Result getAllBatch(Integer type){
         if(type == null){
             return Result.error("type参数为空！");
@@ -177,7 +176,7 @@ public class UniversityProvinceScoreController {
      * @Param:  [type]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getAllSgInfo")
+    @GetMapping("/admin/provinceScore/getAllSgInfo")
     public Result getAllSgInfo(Integer type){
         List<UniversityProvinceScore> list = provinceScoreService.list(new QueryWrapper<UniversityProvinceScore>()
                 .select("distinct sg_info")
@@ -203,7 +202,7 @@ public class UniversityProvinceScoreController {
      * @Param:  [schoolId]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getZslxName")
+    @GetMapping("/admin/provinceScore/getZslxName")
     public Result getZslxName(Integer schoolId){
         List<UniversityProvinceScore> list = provinceScoreService.list(new QueryWrapper<UniversityProvinceScore>()
                 .eq("school_id", schoolId)
@@ -226,7 +225,9 @@ public class UniversityProvinceScoreController {
      * @Param:  [current, size, type, batch, provinceId, schoolId, year]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getProvinceScore/{schoolId}/{provinceId}/{year}")
+    @GetMapping(value={"/admin/provinceScore/getProvinceScore/{schoolId}/{provinceId}/{year}",
+            "/api/provinceScore/getProvinceScore/{schoolId}/{provinceId}/{year}"})
+
     public Result getProvinceScore(Integer current, Integer size, Integer type, @PathVariable String provinceId, @PathVariable String schoolId, @PathVariable String year){
         if(current == null || size == null){
             return Result.error("参数错误！");
@@ -265,7 +266,7 @@ public class UniversityProvinceScoreController {
      * @Param:  [uvProvinceScore]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @PostMapping("/addUvProvinceScore")
+    @PostMapping("/admin/provinceScore/addUvProvinceScore")
     public Result addUvProvinceScore(@RequestBody UniversityProvinceScore uvProvinceScore){
         Integer provinceId = uvProvinceScore.getProvinceId();
         Integer year = uvProvinceScore.getYear();
@@ -306,7 +307,7 @@ public class UniversityProvinceScoreController {
     }
 
 
-    @PostMapping("/updateProvinceScore")
+    @PostMapping("/admin/provinceScore/updateProvinceScore")
     public Result updateProvinceScore(@RequestBody UniversityProvinceScore uvProvinceScore){
         Integer provinceId = uvProvinceScore.getProvinceId();
         Integer year = uvProvinceScore.getYear();
@@ -344,7 +345,7 @@ public class UniversityProvinceScoreController {
         return Result.success("更新成功！");
     }
 
-    @PostMapping("/deleteProvinceScore")
+    @PostMapping("/admin/provinceScore/deleteProvinceScore")
     public Result deleteProvinceScore(Integer id){
 
         provinceScoreService.removeById(id);

@@ -23,6 +23,39 @@
             inner join university_tags tags on university.school_id = tags.school_id
     </select>
 
+<!--    Page<UniversityVo> selectCustom(@Param("page") Page<UniversityVo> page,-->
+<!--    @Param("f985") Integer f985, @Param("f211")Integer f211,-->
+<!--    @Param("dualClassName") String dualClassName,-->
+<!--    @Param("typeName")String typeName,-->
+<!--    @Param("schoolName")String schoolName,-->
+<!--    @Param("provinceId")Integer provinceId);-->
+    <select id="selectCustom" resultType="com.zzuli.gaokao.vo.UniversityVo">
+        select
+        u.school_id,u.school_name,u.city_name,u.town_name,u.header_url,u.province_id,
+        tags.f985,tags.f211,tags.school_type_name,tags.school_nature_name,tags.type_name,
+        tags.dual_class_name
+        from university u
+        inner join university_tags tags on u.school_id = tags.school_id
+        where 1 = 1
+        <if test="f985 != null">
+            and tags.f985 = 1
+        </if>
+        <if test="f211 != null">
+            and tags.f211 = 1
+        </if>
+        <if test="dualClassName != null">
+            and tags.dual_class_name =  #{dualClassName}
+        </if>
+        <if test="typeName != null">
+            and tags.type_name =  #{typeName}
+        </if>
+        <if test="provinceId != null">
+            and u.province_id = #{provinceId}
+        </if>
+        <if test="schoolName != null">
+            and u.school_name like CONCAT('%',#{schoolName},'%')
+        </if>
+    </select>
 
 
 </mapper>

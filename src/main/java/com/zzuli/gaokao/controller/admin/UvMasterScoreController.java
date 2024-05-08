@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/admin/uvmScore")
 public class UvMasterScoreController {
 
     @Autowired
@@ -40,7 +39,7 @@ public class UvMasterScoreController {
      * @Param:  [schoolId, provinceId, year]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getTypes")
+    @GetMapping(value={"/admin/uvmScore/getTypes","/api/uvmScore/getTypes"})
     public Result getType(Integer schoolId,Integer provinceId,Integer year){
 
         if(schoolId == null || provinceId == null || year == null){
@@ -67,7 +66,7 @@ public class UvMasterScoreController {
      * @Param:  [schoolId, provinceId, year]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getBatch")
+    @GetMapping(value={"/admin/uvmScore/getBatch","/api/uvmScore/getBatch"})
     public Result getBatch(Integer schoolId,Integer provinceId,String year,Integer type){
 
         if(schoolId == null || provinceId == null || StringUtils.isBlank(year) || type == null) {
@@ -98,7 +97,7 @@ public class UvMasterScoreController {
      * @Param:  [schoolId, year]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getProvinces")
+    @GetMapping(value={"/admin/uvmScore/getProvinces","/api/uvmScore/getProvinces"})
     public Result getProvinces(Integer schoolId,Integer year){
         if(schoolId == null || year == null){
             return Result.error("参数错误！");
@@ -125,7 +124,7 @@ public class UvMasterScoreController {
      * @Param:  [schoolId]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getYears")
+    @GetMapping(value={"/admin/uvmScore/getYears","/api/uvmScore/getYears"})
     public Result getYears(Integer schoolId){
         if(schoolId == null){
             return Result.error("参数错误！");
@@ -154,7 +153,8 @@ public class UvMasterScoreController {
      * @Param:  [current, size, type, batch, provinceId, schoolId, year]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getMasterScores/{schoolId}/{provinceId}/{year}")
+    @GetMapping(value={"/admin/uvmScore/getMasterScores/{schoolId}/{provinceId}/{year}",
+            "/api/uvmScore/getMasterScores/{schoolId}/{provinceId}/{year}"})
     public Result getMasterScore(Integer current, Integer size,Integer type,String batch, @PathVariable String provinceId, @PathVariable String schoolId, @PathVariable String year){
         if(current == null || size == null){
             return Result.error("参数错误！");
@@ -196,7 +196,7 @@ public class UvMasterScoreController {
      * @Param:  [provinceId]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getAllType")
+    @GetMapping("/admin/uvmScore/getAllType")
     public Result getAllTypeByProvinceId(Integer provinceId){
         if(provinceId == null){
             return Result.error("省份id为空！");
@@ -223,7 +223,7 @@ public class UvMasterScoreController {
      * @Param:  [type]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getAllBatch")
+    @GetMapping("/admin/uvmScore/getAllBatch")
     public Result getAllBatch(Integer type){
         if(type == null){
             return Result.error("type参数为空！");
@@ -250,7 +250,7 @@ public class UvMasterScoreController {
      * @Param:  [type]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @GetMapping("/getAllSgInfo")
+    @GetMapping("/admin/uvmScore/getAllSgInfo")
     public Result getAllSgInfo(Integer type){
         List<UniversityMasterScore> list = service.list(new QueryWrapper<UniversityMasterScore>()
                 .select("distinct sg_info")
@@ -276,7 +276,7 @@ public class UvMasterScoreController {
      * @Param:  [uvMasterScore]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @PostMapping("/addUvmScore")
+    @PostMapping("/admin/uvmScore/addUvmScore")
     public Result addUvmScore(@RequestBody UniversityMasterScore uvMasterScore){
         Integer year = uvMasterScore.getYear();
         String spname = uvMasterScore.getSpname();
@@ -325,7 +325,7 @@ public class UvMasterScoreController {
      * @Param:  [id]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @PostMapping("/deleteUvmScore")
+    @PostMapping("/admin/uvmScore/deleteUvmScore")
     public Result deleteUvmScore(Integer id){
         service.removeById(id);
         return Result.success("删除成功！");
@@ -337,7 +337,7 @@ public class UvMasterScoreController {
      * @Param:  [uvMasterScore]
      * @Return: com.zzuli.gaokao.common.Result
      */
-    @PostMapping("/updateUvmScore")
+    @PostMapping("/admin/uvmScore/updateUvmScore")
     public Result updateUvmScore(@RequestBody UniversityMasterScore uvMasterScore){
         Integer year = uvMasterScore.getYear();
         String spname = uvMasterScore.getSpname();
