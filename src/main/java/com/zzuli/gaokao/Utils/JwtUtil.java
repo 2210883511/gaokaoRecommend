@@ -23,6 +23,16 @@ public class JwtUtil {
                 .compact();
     }
 
+    public static String getToken(Map<String,Object> user){
+
+        return Jwts.builder()
+                .setClaims(user)
+                // 设置过期时间为 1小时
+                .setExpiration(new Date(System.currentTimeMillis() + CommonUtils.TOKEN_EXPIRED))
+                .signWith(SignatureAlgorithm.HS256,SECRET)
+                .compact();
+    }
+
 
     /*
      * @Description: 用于在拦截器中验证jwt是否过期或者被篡改

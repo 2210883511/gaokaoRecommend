@@ -112,7 +112,7 @@ public class UvMasterController {
         }
         List<UniversityMaster> uvList = uvMasterService.list(wrapper);
         if(uvList.isEmpty())
-            return Result.error("未查询到相关高校的专业信息");
+            return Result.success();
         List<Integer> masterIds = uvList.stream()
                 .map(UniversityMaster::getSpecialId)
                 .collect(Collectors.toList());

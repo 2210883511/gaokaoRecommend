@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/cfRecommend")
 public class CFRecommendController {
 
     @Autowired
@@ -24,7 +23,7 @@ public class CFRecommendController {
     private UniversityService universityService;
 
 
-    @GetMapping("/recommend")
+    @GetMapping(value={"/admin/cfRecommend/recommend","/api/cfRecommend/recommend"})
     public Result getRecommendByUserId(Integer userId){
         if(userId == null){
             return Result.error("用户id不能为空！");

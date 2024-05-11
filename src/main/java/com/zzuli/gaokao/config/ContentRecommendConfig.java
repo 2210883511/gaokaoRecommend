@@ -9,6 +9,7 @@ import com.zzuli.gaokao.mapper.UniversityImgMapper;
 import com.zzuli.gaokao.mapper.UniversityInfoMapper;
 import com.zzuli.gaokao.mapper.UniversityMapper;
 import com.zzuli.gaokao.mapper.UniversityTagsMapper;
+import com.zzuli.gaokao.vo.UniversityDataVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -44,25 +46,39 @@ public class ContentRecommendConfig {
         List<University> universityList = universityMapper.selectList(null);
         List<UniversityTags> universityTagsList = tagsMapper.selectList(null);
         List<UniversityInfo> universityInfos = infoMapper.selectList(null);
-        universityInfos.sort(Comparator.comparingInt(UniversityInfo::getSchoolId));
-        universityList.sort(Comparator.comparingInt(University::getSchoolId));
-        universityTagsList.sort((Comparator.comparingInt(UniversityTags::getSchoolId)));
+        ArrayList<UniversityDataVo> list = new ArrayList<>();
+        for (University university : universityList) {
+            for (UniversityTags tags : universityTagsList) {
+                if(university.getSchoolId().equals(tags.getSchoolId())){
+                    UniversityDataVo vo = new UniversityDataVo();
+                    vo.setUniversity(university);
+                    vo.setTags(tags);
+                    list.add(vo);
+                    break;
+                }
+            }
+        }
+        for (UniversityDataVo vo : list) {
+            for (UniversityInfo info : universityInfos) {
+                if(vo.getSchoolId().equals(info.getSchoolId())){
+                    vo.setInfo(info);
+                    break;
+                }
+            }
+        }
         StringBuilder tem = null;
-        for (int i = 0; i < universityList.size(); i++) {
+        for (UniversityDataVo vo : list) {
             tem = new StringBuilder();
-            University university = universityList.get(i);
-            UniversityTags tags = universityTagsList.get(i);
-            UniversityInfo info = universityInfos.get(i);
-            String belong = info.getBelong();
-            String content = info.getContent();
-            String schoolName = university.getSchoolName();
-            String cityName = university.getCityName();
-            String schoolNatureName = tags.getSchoolNatureName(); // 公办
-            String dualClassName = tags.getDualClassName(); // 双一流
-            String schoolTypeName = tags.getSchoolTypeName();// 普通本科 专科高职
-            String typeName = tags.getTypeName();   // 理工类
-            Integer f211 = tags.getF211();
-            Integer f985 = tags.getF985();
+            String belong = vo.getBelong();
+            String content = vo.getContent();
+            String schoolName = vo.getSchoolName();
+            String cityName = vo.getCityName();
+            String schoolNatureName = vo.getSchoolNatureName(); // 公办
+            String dualClassName = vo.getDualClassName(); // 双一流
+            String schoolTypeName = vo.getSchoolTypeName();// 普通本科 专科高职
+            String typeName = vo.getTypeName();   // 理工类
+            Integer f211 = vo.getF211();
+            Integer f985 = vo.getF985();
             if (!StringUtils.isBlank(schoolTypeName)) {
                 tem.append(schoolTypeName).append(" ");
             }
@@ -77,11 +93,15 @@ public class ContentRecommendConfig {
             if (!StringUtils.isBlank(typeName)) {
                 tem.append(typeName).append(" ");
             }
-            if (f985 == 1) {
-                tem.append("985").append(" ");
+            if(f985 != null){
+                if (f985 == 1) {
+                    tem.append("985").append(" ");
+                }
             }
-            if (f211 == 1) {
-                tem.append("211").append(" ");
+            if(f211 != null){
+                if (f211 == 1) {
+                    tem.append("211").append(" ");
+                }
             }
             if (!StringUtils.isBlank(cityName)) {
                 tem.append(cityName).append(" ");
@@ -96,9 +116,9 @@ public class ContentRecommendConfig {
             if (!StringUtils.isBlank(content)) {
                 tem.append(content).append(" ");
             }
-            model.addDocument(university.getSchoolId(),tem.toString());
-        }
+            model.addDocument(vo.getSchoolId(),tem.toString());
 
+        }
 
         return model;
     }

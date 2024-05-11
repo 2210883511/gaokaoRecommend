@@ -47,7 +47,7 @@ public class MasterPlanController {
                 .select("distinct year")
                 .eq("school_id", schoolId));
         if(list.isEmpty()){
-            return Result.error("该高校没有数据！");
+            return Result.success();
         }
 
         List<Integer> years = list.stream()

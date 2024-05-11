@@ -37,9 +37,11 @@
         from university u
         inner join university_tags tags on u.school_id = tags.school_id
         where 1 = 1
+        and u.status = 1
         <if test="f985 != null">
             and tags.f985 = 1
         </if>
+
         <if test="f211 != null">
             and tags.f211 = 1
         </if>

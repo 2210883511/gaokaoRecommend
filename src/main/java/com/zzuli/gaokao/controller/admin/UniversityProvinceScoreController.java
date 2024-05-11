@@ -52,7 +52,7 @@ public class UniversityProvinceScoreController {
                 .eq("school_id", schoolId)
                 .orderByDesc("year"));
         if(list.isEmpty()){
-            return Result.error("该高校没有省份数据！");
+            return Result.success();
         }
         List<Integer> years = list.stream()
                 .map(UniversityProvinceScore::getYear)

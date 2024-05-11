@@ -7,8 +7,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zzuli.gaokao.Utils.CommonUtils;
 import com.zzuli.gaokao.bean.*;
 import com.zzuli.gaokao.common.Result;
-import com.zzuli.gaokao.service.Impl.UniversityInfoServiceImpl;
-import com.zzuli.gaokao.service.Impl.UniversityRankServiceImpl;
 import com.zzuli.gaokao.service.Impl.UniversityServiceImpl;
 import com.zzuli.gaokao.service.Impl.UniversityTagsServiceImpl;
 import com.zzuli.gaokao.service.UniversityImgService;
@@ -26,11 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+
 
 
 @Slf4j
@@ -83,6 +79,7 @@ public class UniversityController {
 
     @PostMapping("/upload")
     public Result upload(MultipartFile headerImg){
+
         if(headerImg == null){
             return Result.error("图片不能为空！");
         }
