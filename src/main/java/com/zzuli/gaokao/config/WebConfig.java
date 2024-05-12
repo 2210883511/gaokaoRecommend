@@ -16,6 +16,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Autowired
     HandlerInterceptor userLoginInterceptor;
 
+    @Autowired
+    HandlerInterceptor loginRequiredInterceptor;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
 
@@ -33,10 +36,12 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/admin/**")
                 .excludePathPatterns("/admin/login")
                 .excludePathPatterns("/admin/captcha");
-//        registry.addInterceptor(userLoginInterceptor)
-//                .addPathPatterns("/api/**")
-//                .excludePathPatterns("/api/user/login")
-//                .excludePathPatterns("/api/user/captcha");
+        registry.addInterceptor(userLoginInterceptor)
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/user/login")
+                .excludePathPatterns("/api/user/captcha");
+        registry.addInterceptor(loginRequiredInterceptor)
+                .addPathPatterns("/api/**");
         WebMvcConfigurer.super.addInterceptors(registry);
     }
 }

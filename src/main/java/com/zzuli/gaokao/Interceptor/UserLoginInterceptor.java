@@ -40,6 +40,7 @@ public class UserLoginInterceptor implements HandlerInterceptor {
             return true;
         }
         String token = request.getHeader("UserToken");
+
         if(StringUtils.isNotBlank(token)){
             // 解析token
             if(JwtUtil.verifyToken(token)){
@@ -73,6 +74,7 @@ public class UserLoginInterceptor implements HandlerInterceptor {
             }
 
         }
+
         // token为null也直接放行
         return true;
     }
