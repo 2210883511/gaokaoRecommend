@@ -27,7 +27,7 @@ public class CFRecommenderConfig {
     @Bean
     public CFRecommend getCFRecommend(){
 
-        ClassPathResource resource = new ClassPathResource("/test.txt");
+        ClassPathResource resource = new ClassPathResource("/cf.txt");
         File file = null;
         FileDataModel model = null;
         ALSWRFactorizer factorizer = null;

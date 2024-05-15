@@ -30,6 +30,12 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- 添加 spring-boot-devtools 依赖 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-devtools</artifactId>
+            </dependency>
+
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>

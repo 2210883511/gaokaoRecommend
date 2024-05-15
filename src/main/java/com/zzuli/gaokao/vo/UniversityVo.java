@@ -35,6 +35,8 @@ public class UniversityVo {
 
     private String url;
 
+    private String recommendBy;
+
 
     public void setUniversity(University university){
 

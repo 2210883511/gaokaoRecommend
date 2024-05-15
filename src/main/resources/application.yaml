@@ -8,6 +8,12 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
   codec:
     max-in-memory-size: 100MB
+    # 格式化全局时间字段
+  jackson:
+    date-format: yyyy年MM月dd日 HH:mm:ss
+    time-zone: GMT+8
+
+
   thymeleaf:
     enabled: false
   #    配置redis

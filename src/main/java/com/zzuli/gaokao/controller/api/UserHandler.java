@@ -5,20 +5,19 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wf.captcha.SpecCaptcha;
-import com.zzuli.gaokao.Utils.CommonUtils;
-import com.zzuli.gaokao.Utils.HostHolder;
-import com.zzuli.gaokao.Utils.JwtUtil;
-import com.zzuli.gaokao.Utils.RedisUtil;
+import com.zzuli.gaokao.Utils.*;
 import com.zzuli.gaokao.bean.User;
 import com.zzuli.gaokao.common.Result;
 import com.zzuli.gaokao.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -36,7 +35,15 @@ public class UserHandler {
     @Autowired
     private HostHolder hostHolder;
 
-    
+
+    @Value("${gaokao.path.upload-path}")
+    String uploadPath;
+
+    @Value("${gaokao.path.domain}")
+    String domain;
+
+
+
     /*
      * @Description: 用户登录功能
      * @Date:   2024/5/10 20:17
@@ -97,6 +104,9 @@ public class UserHandler {
         redisTemplate.delete(userTokenKey);
         return Result.success("退出成功！");
     }
+
+
+
 
 
     
@@ -162,6 +172,65 @@ public class UserHandler {
         map.put("id",key);
         map.put("url",base64);
         return Result.success(map);
+    }
+
+
+    @PostMapping("/registry")
+    public Result register(@RequestBody User user,String captchaId,String captcha){
+        if (user == null){
+            return Result.error("请求参数为空！");
+        }
+        String userCaptchaKey = RedisUtil.getUserCaptchaKey(captchaId);
+        Object text = redisTemplate.opsForValue().get(userCaptchaKey);
+        if(text == null){
+            return Result.error("验证码过期！");
+        }
+        if(!captcha.equalsIgnoreCase(text.toString())){
+            return Result.error("验证码错误！");
+        }
+        String username = user.getUsername();
+        String email = user.getEmail();
+        String password = user.getPassword();
+        Integer provinceId = user.getProvinceId();
+        String nickname = user.getNickname();
+        if(StringUtils.isBlank(username)){
+            return Result.error("用户名不能为空！");
+        }
+        if(StringUtils.isBlank(password)){
+            return Result.error("密码不能为空！");
+        }
+        if(StringUtils.isBlank(email)){
+            return Result.error("邮箱不能为空！");
+        }
+        if(StringUtils.isBlank(nickname)){
+            return Result.error("昵称不能为空！");
+        }
+        if(provinceId == null){
+            return Result.error("省份不能为空！");
+        }
+        User one = null;
+        one = userService.getOne(new QueryWrapper<User>().select("username").eq("username", username));
+        if(one != null)
+            return Result.error("用户名重复了,换一个吧");
+
+        one = userService.getOne(new QueryWrapper<User>().select("email").eq("email",user.getEmail()));
+        if(one != null)
+            return Result.error("邮箱已经重复了,换一个吧");
+
+        one = userService.getOne(new QueryWrapper<User>().select("nickname").eq("nickname",user.getNickname()));
+        if(one != null)
+            return Result.error("昵称已经重复了,换一个吧");
+        String filename = CommonUtils.generateUUID();
+        HeaderUtil.generate(user.getNickname(),uploadPath,filename);
+        String headerUrl = domain + filename + ".jpg";
+        user.setSalt(CommonUtils.generateUUID().substring(0,6));
+        user.setPassword(CommonUtils.md5(user.getPassword() + user.getSalt()));
+        user.setStatus(1);
+        user.setCreateTime(new Date());
+        user.setHeaderUrl(headerUrl);
+        user.setDescription("这个人很懒，什么都没有写。");
+        userService.save(user);
+        return Result.success("添加成功！");
     }
 
 

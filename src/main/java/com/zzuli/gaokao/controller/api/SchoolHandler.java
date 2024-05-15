@@ -2,26 +2,30 @@ package com.zzuli.gaokao.controller.api;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zzuli.gaokao.bean.Provinces;
-import com.zzuli.gaokao.bean.University;
-import com.zzuli.gaokao.bean.UniversityInfo;
-import com.zzuli.gaokao.bean.UniversityTags;
+import com.zzuli.gaokao.Utils.HostHolder;
+import com.zzuli.gaokao.annotation.LoginRequired;
+import com.zzuli.gaokao.bean.*;
 import com.zzuli.gaokao.common.Result;
 import com.zzuli.gaokao.service.Impl.UniversityServiceImpl;
 import com.zzuli.gaokao.service.Impl.UniversityTagsServiceImpl;
 import com.zzuli.gaokao.service.ProvincesService;
 import com.zzuli.gaokao.service.UniversityInfoService;
+import com.zzuli.gaokao.service.UserActionService;
 import com.zzuli.gaokao.vo.UniversityDetailVo;
 import com.zzuli.gaokao.vo.UniversityVo;
+import com.zzuli.gaokao.vo.UserHistoryVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +46,14 @@ public class SchoolHandler {
 
     @Autowired
     private UniversityInfoService infoService;
+
+    @Autowired
+    private HostHolder hostHolder;
+
+    @Autowired
+    private UserActionService actionService;
+
+
 
 
     /*
@@ -69,9 +81,33 @@ public class SchoolHandler {
 
 
     @GetMapping("/schoolDetail")
+    @Transactional
     public Result getSchoolDetail(Integer schoolId){
         if(schoolId == null){
             return Result.error("参数错误！");
+        }
+        User user = hostHolder.getUser();
+        // 表明用户登录了，将访问记录存到mysql中
+        if(user != null){
+            UserAction one = actionService.getOne(new QueryWrapper<UserAction>()
+                    .eq("user_id", user.getId())
+                    .eq("entity_type", 1)
+                    .eq("entity_id", schoolId));
+            if(one != null){
+               actionService.update(new UpdateWrapper<UserAction>()
+                       .set("create_time",new Date().getTime())
+                       .eq("user_id",user.getId())
+                       .eq("entity_type",1)
+                       .eq("entity_id",schoolId));
+            }else {
+                UserAction userAction = new UserAction();
+                userAction.setUserId(user.getId());
+                userAction.setEntityType(1);
+                userAction.setEntityId(schoolId);
+                userAction.setCreateTime(new Date().getTime());
+                actionService.save(userAction);
+            }
+
         }
         UniversityDetailVo vo = new UniversityDetailVo();
         University university = universityService.getOne(new QueryWrapper<University>()
@@ -96,6 +132,49 @@ public class SchoolHandler {
 
         HashMap<String, Object> map = new HashMap<>();
         map.put("vo",vo);
+        return Result.success(map);
+    }
+
+
+    @LoginRequired
+    @GetMapping("/userHistory")
+    public Result getUserHistory(){
+        User user = hostHolder.getUser();
+        Integer userId = user.getId();
+        if(userId == null){
+            return Result.error("用户id参数错误！");
+        }
+        // 查询用户最近10条的浏览记录 倒叙排列
+        Page<UserAction> page = actionService.page(new Page<UserAction>(1, 10), new QueryWrapper<UserAction>()
+                .eq("user_id", userId)
+                .orderByDesc("create_time"));
+        List<UserAction> actionList = page.getRecords();
+        List<Integer> ids = actionList.stream()
+                .map(UserAction::getEntityId)
+                .collect(Collectors.toList());
+        List<University> universityList = null;
+        ArrayList<UserHistoryVo> voList = new ArrayList<>();
+        if(!ids.isEmpty()){
+            universityList = universityService.list(new QueryWrapper<University>()
+                    .select("school_name", "header_url", "school_id")
+                    .in("school_id", ids));
+            for (UserAction userAction : actionList) {
+                for (University university : universityList) {
+                    if(userAction.getEntityId().equals(university.getSchoolId())){
+                        UserHistoryVo vo = new UserHistoryVo();
+                        vo.setUserId(userId);
+                        vo.setSchoolId(university.getSchoolId());
+                        vo.setHeaderUrl(university.getHeaderUrl());
+                        vo.setCreateTime(new Date(userAction.getCreateTime()));
+                        vo.setSchoolName(university.getSchoolName());
+                        voList.add(vo);
+                        break;
+                    }
+                }
+            }
+        }
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("historyList",voList);
         return Result.success(map);
     }
 

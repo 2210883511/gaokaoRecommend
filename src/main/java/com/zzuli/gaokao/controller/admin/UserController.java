@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zzuli.gaokao.Utils.CommonUtils;
 import com.zzuli.gaokao.Utils.HeaderUtil;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -233,9 +235,9 @@ public class UserController {
             String profile = one.getProfile();
 
             ObjectMapper objectMapper = new ObjectMapper();
-            ArrayList arrayList = null;
+            ArrayList<TfIdfVo> arrayList = null;
             try {
-                arrayList = objectMapper.readValue(profile, ArrayList.class);
+                arrayList = objectMapper.readValue(profile, new TypeReference<ArrayList<TfIdfVo>>() {});
             } catch (JsonProcessingException e) {
                 log.error("json解析失败！");
             }

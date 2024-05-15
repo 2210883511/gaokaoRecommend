@@ -72,18 +72,18 @@ public class UniversityDataVo {
         if(StringUtils.isNotBlank(this.typeName)){
             builder.append(this.typeName).append(" ");
         }
-        if(this.f985 == 1){
-            builder.append("985").append(" ");
+
+        if(this.f985 != null){
+            if(this.f985 == 1){
+                builder.append("985").append(" ");
+            }
         }
-        if(this.f211 == 1){
-            builder.append("211").append(" ");
+        if(this.f211 != null){
+            if(this.f211 == 1){
+                builder.append("211").append(" ");
+            }
         }
-//        if(StringUtils.isNotBlank(this.cityName)){
-//            builder.append(this.cityName).append(" ");
-//        }
-//        if(StringUtils.isNotBlank(this.townName)){
-//            builder.append(this.townName).append(" ");
-//        }
+
         if(StringUtils.isNotBlank(this.belong)){
             builder.append(this.belong).append(" ");
         }

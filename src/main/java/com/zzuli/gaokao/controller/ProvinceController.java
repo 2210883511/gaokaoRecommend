@@ -15,7 +15,6 @@ import java.util.List;
 
 @RestController
 public class ProvinceController {
-    Integer count = 0;
 
     @Autowired
     private ProvincesServiceImpl provincesService;
@@ -23,11 +22,9 @@ public class ProvinceController {
 
     @GetMapping("/getProvinces")
     public Result getProvince(){
-        count++;
         List<Provinces> list = provincesService.list();
         HashMap<String, Object> map = new HashMap<>();
         map.put("provinces",list);
-        map.put("count",count);
         return Result.success(map);
     }
 }
