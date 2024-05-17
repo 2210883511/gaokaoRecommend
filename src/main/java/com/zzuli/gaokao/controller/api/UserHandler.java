@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wf.captcha.SpecCaptcha;
 import com.zzuli.gaokao.Utils.*;
+import com.zzuli.gaokao.annotation.LoginRequired;
 import com.zzuli.gaokao.bean.User;
 import com.zzuli.gaokao.common.Result;
 import com.zzuli.gaokao.service.UserService;
@@ -15,7 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -93,6 +97,7 @@ public class UserHandler {
      * @Param:  [token]
      * @Return: com.zzuli.gaokao.common.Result
      */
+    @LoginRequired
     @PostMapping("/logout")
     public Result logout(){
         User user = hostHolder.getUser();
@@ -232,6 +237,75 @@ public class UserHandler {
         userService.save(user);
         return Result.success("添加成功！");
     }
+
+
+
+    @LoginRequired
+    @PostMapping("/upload")
+    public Result upload(MultipartFile headerImg){
+
+        if(headerImg == null){
+            return Result.error("图片不能为空！");
+        }
+        String filename = headerImg.getOriginalFilename();
+        String suffix = filename.substring(filename.lastIndexOf("."));
+        filename = CommonUtils.generateUUID() + suffix;
+        File file = new File(uploadPath);
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        try {
+            headerImg.transferTo(new File(uploadPath + File.separator + filename));
+            String headerUrl = domain + filename;
+            HashMap<String, String> map = new HashMap<>();
+            map.put("headerUrl",headerUrl);
+            return Result.success(map);
+        } catch (IOException e) {
+            return Result.error("头像上传失败！！");
+        }
+
+
+    }
+
+
+
+    @PostMapping("/update")
+    @LoginRequired
+    public Result updateUser(@RequestBody User user){
+        User currentUser = hostHolder.getUser();
+        Integer id = currentUser.getId();
+        String email = user.getEmail();
+        String password = user.getPassword();
+        Integer provinceId = user.getProvinceId();
+        String nickname = user.getNickname();
+        if(StringUtils.isBlank(nickname)){
+            return Result.error("昵称不能为空！");
+        }
+        if(StringUtils.isBlank(email)){
+            return Result.error("邮箱不能为空！");
+        }
+        if(provinceId == null){
+            return Result.error("省份不能为空！");
+        }
+        User one  = null;
+        one = userService.getOne(new QueryWrapper<User>().eq("email",email));
+        if(one != null  && !one.getId().equals(id)){
+            return Result.error("该邮箱已经被占用了!");
+        }
+        one = userService.getOne(new QueryWrapper<User>().eq("nickname",nickname));
+        if(one != null && !one.getId().equals(id)){
+            return Result.error("该昵称已经被占用!");
+        }
+
+        if (!StringUtils.isBlank(password)){
+            String salt = currentUser.getSalt();
+            user.setPassword(CommonUtils.md5(password+salt));
+        }
+        user.setId(id);
+        userService.updateById(user);
+        return Result.success("更新成功！");
+    }
+
 
 
 }

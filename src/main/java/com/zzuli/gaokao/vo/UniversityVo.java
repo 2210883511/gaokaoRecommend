@@ -37,6 +37,8 @@ public class UniversityVo {
 
     private String recommendBy;
 
+    private Integer recommend;
+
 
     public void setUniversity(University university){
 

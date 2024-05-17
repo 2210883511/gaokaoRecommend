@@ -33,7 +33,7 @@ public class CFRecommenderConfig {
         ALSWRFactorizer factorizer = null;
         SVDRecommender recommender = null;
         try {
-            file = resource.getFile();
+            file = new File("/cf.txt");
             model = new FileDataModel(file);
             factorizer = new ALSWRFactorizer(model,5,0.001,100);
             recommender = new SVDRecommender(model, factorizer);
@@ -46,4 +46,28 @@ public class CFRecommenderConfig {
         log.info("协同过滤模型加载成功！");
         return new CFRecommend(model,recommender);
     }
+
+
+//    @Bean
+//    public CFRecommend getCFRecommend(){
+//
+//        ClassPathResource resource = new ClassPathResource("/cf.txt");
+//        File file = null;
+//        FileDataModel model = null;
+//        ALSWRFactorizer factorizer = null;
+//        SVDRecommender recommender = null;
+//        try {
+//            file = resource.getFile();
+//            model = new FileDataModel(file);
+//            factorizer = new ALSWRFactorizer(model,5,0.001,100);
+//            recommender = new SVDRecommender(model, factorizer);
+//
+//        } catch (IOException e) {
+//            log.error("协同过滤数据集加载失败！{}",e.getMessage());
+//        } catch (TasteException e) {
+//            log.error("迭代失败！{}",e.getMessage());
+//        }
+//        log.info("协同过滤模型加载成功！");
+//        return new CFRecommend(model,recommender);
+//    }
 }

@@ -95,13 +95,12 @@ public class CFRecommendServiceImpl {
 
 
     public boolean updateModel(){
-        ClassPathResource resource = new ClassPathResource("/cf.txt");
         File file = null;
         FileDataModel model = null;
         ALSWRFactorizer factorizer = null;
         SVDRecommender recommender = null;
         try {
-            file = resource.getFile();
+            file = new File("/cf.txt");
             model = new FileDataModel(file);
             factorizer = new ALSWRFactorizer(model,5,0.001,100);
             recommender = new SVDRecommender(model, factorizer);

@@ -8,11 +8,9 @@ import com.zzuli.gaokao.Utils.HostHolder;
 import com.zzuli.gaokao.annotation.LoginRequired;
 import com.zzuli.gaokao.bean.*;
 import com.zzuli.gaokao.common.Result;
+import com.zzuli.gaokao.service.*;
 import com.zzuli.gaokao.service.Impl.UniversityServiceImpl;
 import com.zzuli.gaokao.service.Impl.UniversityTagsServiceImpl;
-import com.zzuli.gaokao.service.ProvincesService;
-import com.zzuli.gaokao.service.UniversityInfoService;
-import com.zzuli.gaokao.service.UserActionService;
 import com.zzuli.gaokao.vo.UniversityDetailVo;
 import com.zzuli.gaokao.vo.UniversityVo;
 import com.zzuli.gaokao.vo.UserHistoryVo;
@@ -48,10 +46,21 @@ public class SchoolHandler {
     private UniversityInfoService infoService;
 
     @Autowired
+    private UniversityTagsService tagsService;
+
+    @Autowired
     private HostHolder hostHolder;
 
     @Autowired
     private UserActionService actionService;
+
+    @Autowired
+    private UserFavoriteService favoriteService;
+
+    @Autowired
+    private UserLikeService likeService;
+
+
 
 
 
@@ -175,6 +184,105 @@ public class SchoolHandler {
         }
         HashMap<String, Object> map = new HashMap<>();
         map.put("historyList",voList);
+        return Result.success(map);
+    }
+
+    @LoginRequired
+    @GetMapping("/getFavoriteList")
+    public Result getSchoolList(Integer page,Integer size){
+        User user = hostHolder.getUser();
+        Integer userId = user.getId();
+        if (page == null || size == null) {
+            return Result.error("分页参数错误！");
+        }
+        Page<UserFavorite> favoritePage = new Page<>(page,size);
+        Page<UserFavorite> userFavoritePage = favoriteService.page(favoritePage, new QueryWrapper<UserFavorite>()
+                .eq("user_id", userId)
+                .eq("entity_type", 1));
+        long total = userFavoritePage.getTotal();
+        List<UserFavorite> list = userFavoritePage.getRecords();
+
+        List<Integer> schoolIds = list.stream()
+                .map(UserFavorite::getEntityId)
+                .distinct()
+                .collect(Collectors.toList());
+        ArrayList<UniversityVo> universityVos = new ArrayList<>();
+        if(!schoolIds.isEmpty()){
+            List<University> universityList = universityService.list(new QueryWrapper<University>()
+                    .in("school_id", schoolIds));
+            List<UniversityTags> tagsList = tagsService.list(new QueryWrapper<UniversityTags>()
+                    .in("school_id", schoolIds));
+
+            for (University university : universityList) {
+                for (UniversityTags tags : tagsList) {
+                    if(university.getSchoolId().equals(tags.getSchoolId())){
+                        UniversityVo vo = new UniversityVo();
+                        vo.setUniversity(university);
+                        vo.setTag(tags);
+                        universityVos.add(vo);
+                        break;
+                    }
+                }
+            }
+
+        }
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("universityVoList",universityVos);
+        map.put("total",total);
+        return Result.success(map);
+    }
+
+
+
+    @LoginRequired
+    @GetMapping("/getLikeList")
+    public Result getLikeSchoolList(Integer page,Integer size){
+        User user = hostHolder.getUser();
+        Integer userId = user.getId();
+        if (page == null || size == null) {
+            return Result.error("分页参数错误！");
+        }
+        Page<UserLike> likePage = new Page<>(page,size);
+        Page<UserLike> userLikePage = likeService.page(likePage, new QueryWrapper<UserLike>()
+                .eq("user_id", userId)
+                .eq("entity_type", 1)
+                .orderByDesc("create_time"));
+        long total = userLikePage.getTotal();
+        List<UserLike> list = userLikePage.getRecords();
+        List<Integer> schoolIds = list.stream()
+                .map(UserLike::getEntityId)
+                .distinct()
+                .collect(Collectors.toList());
+        ArrayList<UniversityVo> universityVos = new ArrayList<>();
+        if(!schoolIds.isEmpty()){
+            List<University> universityList = universityService.list(new QueryWrapper<University>()
+                    .in("school_id", schoolIds));
+            List<UniversityTags> tagsList = tagsService.list(new QueryWrapper<UniversityTags>()
+                    .in("school_id", schoolIds));
+            for (University university : universityList) {
+                for (UniversityTags tags : tagsList) {
+                    if(university.getSchoolId().equals(tags.getSchoolId())){
+                        UniversityVo vo = new UniversityVo();
+                        vo.setUniversity(university);
+                        vo.setTag(tags);
+                        universityVos.add(vo);
+                        break;
+                    }
+                }
+            }
+
+        }
+        for (UniversityVo universityVo : universityVos) {
+            for (UserLike userLike : list) {
+                if(universityVo.getSchoolId().equals(userLike.getEntityId())){
+                    universityVo.setRecommend(userLike.getRecommend());
+                    break;
+                }
+            }
+        }
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("universityVoList",universityVos);
+        map.put("total",total);
         return Result.success(map);
     }
 

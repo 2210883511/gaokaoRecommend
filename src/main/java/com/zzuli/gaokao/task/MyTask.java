@@ -8,14 +8,12 @@ import com.zzuli.gaokao.service.UserFavoriteService;
 import com.zzuli.gaokao.service.UserLikeService;
 import com.zzuli.gaokao.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.hadoop.yarn.webapp.hamlet.Hamlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
@@ -38,7 +36,9 @@ public class MyTask {
     @Autowired
     private CFRecommendServiceImpl cfRecommendService;
 
-    @Scheduled(fixedDelay = 5000)
+
+    // 一个小时更新一次
+    @Scheduled(fixedDelay = 1000 * 60 * 60)
     public void updateCFModel(){
 
         List<UserLike> likeList = likeService.list();
@@ -88,10 +88,6 @@ public class MyTask {
                 }
             }
         }
-        ClassPathResource resource = new ClassPathResource("/cf.txt");
-        String path = resource.getPath();
-        System.out.println(path);
-
         try( BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("/cf.txt"));) {
             for (Integer userId : currentUserMap.keySet()) {
                 ArrayList<Map<Integer, Integer>> list = currentUserMap.get(userId);
