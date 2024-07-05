@@ -17,7 +17,7 @@ import com.zzuli.gaokao.service.ProvincesService;
 import com.zzuli.gaokao.service.UniversityInfoService;
 import com.zzuli.gaokao.service.UniversityService;
 import com.zzuli.gaokao.service.UniversityTagsService;
-import com.zzuli.gaokao.vo.StopWords;
+import com.zzuli.gaokao.common.StopWords;
 import com.zzuli.gaokao.vo.TfIdfVo;
 import com.zzuli.gaokao.vo.UniversityDataVo;
 import com.zzuli.gaokao.vo.UniversityVo;
@@ -186,7 +186,6 @@ public class ContentRecommendController {
         trainer.setLayerSize(100);
         WordVectorModel train = trainer.train("./src/main/resources/train.txt","./src/main/resources/ok.txt");
         DocVectorModel model = new DocVectorModel(train);
-        System.out.println(model);
         return Result.success("训练成功！");
     }
 
@@ -258,7 +257,6 @@ public class ContentRecommendController {
         ArrayList<TfIdfVo> tfIdfVos = new ArrayList<>();
         for (UniversityDataVo vo : list) {
             List<Map.Entry<String, Double>> keywordsOf = counter.getKeywordsOf(vo.getSchoolId(), 30);
-            System.out.println(keywordsOf);
             for (Map.Entry<String, Double> stringDoubleEntry : keywordsOf) {
                  TfIdfVo tf = new TfIdfVo();
                  tf.setName(stringDoubleEntry.getKey());
@@ -293,7 +291,7 @@ public class ContentRecommendController {
                     .in("school_id", ids));
             List<UniversityImg> imgList = imgMapper.selectList(new QueryWrapper<UniversityImg>()
                     .select("school_id", "url")
-                    .orderByDesc("rank")
+                    .orderByDesc("`rank`")
                     .in("school_id", ids));
             for (University university : universityList) {
                 for (UniversityTags tags : tagsList) {

@@ -98,6 +98,7 @@ public class UniversityImgController {
                 .collect(Collectors.toList());
 
         QueryWrapper<UniversityImg> imgQueryWrapper = new QueryWrapper<>();
+        imgQueryWrapper.select("id","school_id","`rank`","url","title","status");
         imgQueryWrapper.in("school_id",ids);
         List<UniversityImg> universityImages = imgService.list(imgQueryWrapper);
         Map<Integer, List<UniversityImg>> collect = universityImages.stream()

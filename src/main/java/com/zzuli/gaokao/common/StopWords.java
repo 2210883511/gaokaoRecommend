@@ -1,4 +1,4 @@
-package com.zzuli.gaokao.vo;
+package com.zzuli.gaokao.common;
 
 import lombok.Data;
 

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zzuli.gaokao.Utils.HostHolder;
 import com.zzuli.gaokao.annotation.LoginRequired;
+import com.zzuli.gaokao.annotation.MaxLimit;
 import com.zzuli.gaokao.bean.*;
 import com.zzuli.gaokao.common.Result;
 import com.zzuli.gaokao.service.*;
@@ -71,6 +72,7 @@ public class SchoolHandler {
      * @Param:  [page, size, f985, f211, dualClassName, typeName]
      * @Return: com.zzuli.gaokao.common.Result
      */
+    @MaxLimit
     @GetMapping("/schoolList")
     public Result getSchoolList(Integer page, Integer size,Integer f985,Integer f211,String dualClassName,String typeName,
     String schoolName,Integer provinceId){

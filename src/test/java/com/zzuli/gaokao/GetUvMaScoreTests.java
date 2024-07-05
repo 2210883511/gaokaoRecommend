@@ -8,6 +8,7 @@ import com.zzuli.gaokao.bean.Provinces;
 import com.zzuli.gaokao.bean.University;
 import com.zzuli.gaokao.bean.UniversityMasterScore;
 import com.zzuli.gaokao.bean.UniversityProvinceScore;
+import com.zzuli.gaokao.common.WebSocketHandler;
 import com.zzuli.gaokao.common.universitPprovinceSccore.JsonTest;
 import com.zzuli.gaokao.common.uvMasterScore.Item;
 import com.zzuli.gaokao.common.uvMasterScore.JsonUvMasterScore;
@@ -38,6 +39,10 @@ public class GetUvMaScoreTests {
     @Autowired
     private UniversityMasterScoreMapper scoreMapper;
 
+    @Autowired
+    private WebSocketHandler webSocketHandler;
+
+
     Integer[] years =  {2023};
 
     @Test
@@ -53,6 +58,7 @@ public class GetUvMaScoreTests {
                 .block();
 
         ObjectMapper objectMapper = new ObjectMapper();
+
         try {
             JsonUvMasterScore jsonUvMasterScore = objectMapper.readValue(json, JsonUvMasterScore.class);
             System.out.println(jsonUvMasterScore);

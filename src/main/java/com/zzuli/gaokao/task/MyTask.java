@@ -9,7 +9,7 @@ import com.zzuli.gaokao.service.UserLikeService;
 import com.zzuli.gaokao.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +35,10 @@ public class MyTask {
 
     @Autowired
     private CFRecommendServiceImpl cfRecommendService;
+
+
+    @Value("${gaokao.path.cf-path}")
+    String cfPath;
 
 
     // 一个小时更新一次
@@ -88,7 +92,7 @@ public class MyTask {
                 }
             }
         }
-        try( BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("/cf.txt"));) {
+        try( BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(cfPath));) {
             for (Integer userId : currentUserMap.keySet()) {
                 ArrayList<Map<Integer, Integer>> list = currentUserMap.get(userId);
                 for (Map<Integer, Integer> map : list) {
@@ -108,13 +112,7 @@ public class MyTask {
             log.warn("协同过滤数据写入失败！{}",e.getMessage());
         }
 
-
-
-
     }
-
-
-
 
 
 

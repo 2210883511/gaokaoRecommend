@@ -85,7 +85,7 @@ public class UniversityServiceImpl extends ServiceImpl<UniversityMapper, Univers
                     .in("school_id", ids));
             List<UniversityImg> imgList = imgMapper.selectList(new QueryWrapper<UniversityImg>()
                     .select("school_id", "url")
-                    .orderByDesc("rank")
+                    .orderByDesc("`rank`")
                     .in("school_id", ids)
             );
 
@@ -155,7 +155,7 @@ public class UniversityServiceImpl extends ServiceImpl<UniversityMapper, Univers
                 .in("school_id", schoolIds));
             List<UniversityImg> imgList = imgMapper.selectList(new QueryWrapper<UniversityImg>()
                 .select("school_id", "url")
-                .orderByDesc("rank")
+                .orderByDesc("`rank`")
                 .in("school_id", schoolIds));
 
         List<UniversityVo> voList = uvList.stream()

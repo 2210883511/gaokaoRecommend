@@ -1,6 +1,6 @@
 package com.zzuli.gaokao.config;
 
-import com.zzuli.gaokao.vo.StopWords;
+import com.zzuli.gaokao.common.StopWords;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,13 +16,12 @@ public class StopWordsConfig {
     @Bean
     public StopWords getStopWords(){
 
-        ClassPathResource resource = new ClassPathResource("/cn_stopwords.txt");
-        File file = null;
+        ClassPathResource resource = new ClassPathResource("/static/cn_stopwords.txt");
         BufferedReader bufferedReader = null;
         StopWords words = null;
         try {
-            file = resource.getFile();
-            bufferedReader = new BufferedReader(new FileReader(file));
+            InputStream inputStream = resource.getInputStream();
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             words = new StopWords();
             String line = null;
             while((line = bufferedReader.readLine() )!= null){

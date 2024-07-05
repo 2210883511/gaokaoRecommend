@@ -2,41 +2,25 @@ package com.zzuli.gaokao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hankcs.hanlp.mining.word.WordInfo;
-import com.hankcs.hanlp.mining.word2vec.DocVectorModel;
-import com.hankcs.hanlp.mining.word2vec.Word2VecTrainer;
-import com.hankcs.hanlp.mining.word2vec.WordVectorModel;
-import com.hankcs.hanlp.seg.Segment;
 import com.zzuli.gaokao.bean.*;
 import com.zzuli.gaokao.mapper.*;
-import com.zzuli.gaokao.vo.StopWords;
-import com.zzuli.gaokao.vo.TfIdfVo;
-import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.RealVector;
+import com.zzuli.gaokao.common.StopWords;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.hankcs.hanlp.HanLP;
-import com.hankcs.hanlp.classification.features.TfIdfFeatureWeighter;
-import com.hankcs.hanlp.mining.word.TfIdf;
 import com.hankcs.hanlp.mining.word.TfIdfCounter;
 
 import com.hankcs.hanlp.seg.common.Term;
-import com.hankcs.hanlp.tokenizer.StandardTokenizer;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.mahout.math.SequentialAccessSparseVector;
-import org.apache.mahout.vectorizer.TFIDF;
-import org.apache.mahout.vectorizer.tfidf.TFIDFPartialVectorReducer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @SpringBootTest

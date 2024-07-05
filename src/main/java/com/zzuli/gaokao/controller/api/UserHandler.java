@@ -2,15 +2,20 @@ package com.zzuli.gaokao.controller.api;
 
 import com.alibaba.druid.sql.ast.SQLPartitionValue;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wf.captcha.SpecCaptcha;
 import com.zzuli.gaokao.Utils.*;
+import com.zzuli.gaokao.annotation.FilterWords;
 import com.zzuli.gaokao.annotation.LoginRequired;
 import com.zzuli.gaokao.bean.User;
 import com.zzuli.gaokao.common.Result;
 import com.zzuli.gaokao.service.UserService;
+import com.zzuli.gaokao.vo.TfIdfVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.Host;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -304,6 +309,60 @@ public class UserHandler {
         user.setId(id);
         userService.updateById(user);
         return Result.success("更新成功！");
+    }
+
+
+    @LoginRequired
+    @FilterWords
+    @PostMapping("/updateProfile")
+    public Result updateProfile(@RequestBody ArrayList<TfIdfVo> tfIdfVos){
+        User user = hostHolder.getUser();
+        Integer userId = user.getId();
+        if(userId == null){
+            return Result.error("参数错误！");
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = null;
+        try {
+            json = objectMapper.writeValueAsString(tfIdfVos);
+        } catch (JsonProcessingException e) {
+            log.error("json写入失败！");
+        }
+        userService.update(new UpdateWrapper<User>()
+                .eq("id",userId)
+                .set("profile",json));
+
+        return Result.success("更新成功！");
+    }
+    @LoginRequired
+    @GetMapping("/getUserProfile")
+    public Result getProfile(){
+        User user = hostHolder.getUser();
+        Integer userId = user.getId();
+        if(userId == null){
+            return Result.error("参数错误！");
+        }
+        User one = userService.getOne(new QueryWrapper<User>()
+                .eq("id", userId)
+                .select("profile"));
+        HashMap<String, Object> map = new HashMap<>();
+        if(one != null){
+            String profile = one.getProfile();
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            ArrayList<TfIdfVo> arrayList = null;
+            try {
+                arrayList = objectMapper.readValue(profile, new TypeReference<ArrayList<TfIdfVo>>() {});
+            } catch (JsonProcessingException e) {
+                log.error("json解析失败！");
+            }
+
+            map.put("userProfile",arrayList);
+        }else {
+            map.put("userProfile",null);
+
+        }
+        return Result.success(map);
     }
 
 

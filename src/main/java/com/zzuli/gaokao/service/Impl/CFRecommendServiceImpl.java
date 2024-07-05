@@ -9,6 +9,7 @@ import org.apache.mahout.cf.taste.impl.recommender.svd.ALSWRFactorizer;
 import org.apache.mahout.cf.taste.impl.recommender.svd.SVDRecommender;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -29,6 +30,9 @@ public class CFRecommendServiceImpl {
 
     @Autowired
     private RedisTemplate<String,Object> redisTemplate;
+
+    @Value("${gaokao.path.cf-path}")
+    String path;
 
     
     /*
@@ -100,7 +104,7 @@ public class CFRecommendServiceImpl {
         ALSWRFactorizer factorizer = null;
         SVDRecommender recommender = null;
         try {
-            file = new File("/cf.txt");
+            file = new File(path);
             model = new FileDataModel(file);
             factorizer = new ALSWRFactorizer(model,5,0.001,100);
             recommender = new SVDRecommender(model, factorizer);

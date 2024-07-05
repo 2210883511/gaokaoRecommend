@@ -1,0 +1,55 @@
+spring:
+  #  配置数据库连接池
+  datasource:
+    url: jdbc:mysql://localhost:3306/university?serverTimezone=UTC&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+  codec:
+    max-in-memory-size: 100MB
+    # 格式化全局时间字段
+  jackson:
+    date-format: yyyy年MM月dd日 HH:mm:ss
+    time-zone: GMT+8
+
+
+  thymeleaf:
+    enabled: false
+  #    配置redis
+  redis:
+    host: localhost
+    password:
+    port: 6379
+    database: 0
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    use-generated-keys: true
+  type-aliases-package: com.zzuli.gaokao.bean
+
+# 配置MyBatis日志
+mybatis-plus:
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      update-strategy: NOT_NULL
+  type-aliases-package: com.zzuli.gaokao.bean
+
+
+
+
+  #配置community
+gaokao:
+  path:
+      domain: http://localhost:8888/pic/
+      upload-path: d:\pic\upload
+      cf-path: d:/cf.txt
+  loadPath: ./src/main/resources/ok.txt
+
+
+
+

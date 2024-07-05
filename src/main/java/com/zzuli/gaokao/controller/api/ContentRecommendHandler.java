@@ -93,7 +93,7 @@ public class ContentRecommendHandler {
             }
             // 根据用户历史访问记录来进行推荐
             for (UserHistoryVo vo : voList) {
-                List<Map.Entry<Integer, Float>> nearest = model.nearest(vo.getSchoolId(), 5);
+                List<Map.Entry<Integer, Float>> nearest = model.nearest(vo.getSchoolId(), 2);
                 for (Map.Entry<Integer, Float> entry : nearest) {
                     UniversityVo tmp = new UniversityVo();
                     // 获取被推荐的高校id和推荐的高校名称

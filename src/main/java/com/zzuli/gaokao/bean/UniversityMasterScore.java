@@ -9,30 +9,30 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-//@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UniversityMasterScore {
 
 
     @TableId(type=IdType.AUTO)
     private Integer id;
 
-//    @JsonProperty("school_id")
+    @JsonProperty("school_id")
     private Integer schoolId;
 
-//    @JsonProperty("spe_id")
+    @JsonProperty("spe_id")
     private Integer specialId;
 
 
-//    @JsonProperty("province")
+    @JsonProperty("province")
     private Integer provinceId;
 
-//    @JsonProperty("type")
+    @JsonProperty("type")
     private Integer type;
 
-//    @JsonProperty("min")
+    @JsonProperty("min")
     private String min;
 
-//    @JsonProperty("min_section")
+    @JsonProperty("min_section")
     private String minSection;
 
 

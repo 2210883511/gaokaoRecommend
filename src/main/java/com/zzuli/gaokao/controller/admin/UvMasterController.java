@@ -184,7 +184,6 @@ public class UvMasterController {
         Integer specialId = uvMaster.getSpecialId();
         String specialName = uvMaster.getSpecialName();
         Integer schoolId = uvMaster.getSchoolId();
-        System.out.println(uvMaster);
 
         if(specialId == null){
             return Result.error("一级专业不能为空");

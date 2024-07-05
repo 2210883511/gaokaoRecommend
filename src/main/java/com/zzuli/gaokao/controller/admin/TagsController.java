@@ -62,7 +62,6 @@ public class TagsController {
         if(universityTags == null){
             return Result.error("请求体不能为空！");
         }
-        System.out.println(universityTags);
 
         tagsService.update(universityTags,new QueryWrapper<UniversityTags>().eq("school_id",schoolId));
         return Result.success("更新成功");

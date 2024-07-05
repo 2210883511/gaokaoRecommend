@@ -18,7 +18,8 @@ public class WebClientConfig {
                 .codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(size))
                 .build();
         WebClient.Builder builder = WebClient.builder();
-        builder.baseUrl("https://static-data.gaokao.cn/www/2.0")
+//        builder.baseUrl("https://static-data.gaokao.cn/www/2.0/")
+        builder.baseUrl("http://106.55.36.161:8080")
                 .exchangeStrategies(strategies)
                 .defaultHeader(HttpHeaders.USER_AGENT,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
         return builder.build();

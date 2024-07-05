@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zzuli.gaokao.Utils.CommonUtils;
 import com.zzuli.gaokao.Utils.HeaderUtil;
+import com.zzuli.gaokao.annotation.FilterWords;
 import com.zzuli.gaokao.bean.User;
 import com.zzuli.gaokao.common.Result;
 import com.zzuli.gaokao.service.Impl.UserServiceImpl;
@@ -159,7 +160,6 @@ public class UserController {
      */
     @GetMapping("/getPagination")
     public Result getUserList(Integer size,Integer page,String nickname,String username){
-        System.out.println("用户分页方法");
         Page<User> pages = new Page<>(page, size);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         if(nickname != null){
@@ -202,6 +202,7 @@ public class UserController {
     }
 
 
+    @FilterWords
     @PostMapping("/updateProfile")
     public Result updateProfile(Integer userId, @RequestBody ArrayList<TfIdfVo> tfIdfVos){
         if(userId == null){

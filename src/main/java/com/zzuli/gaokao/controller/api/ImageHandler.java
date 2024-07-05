@@ -28,7 +28,7 @@ public class ImageHandler {
         List<UniversityImg> imgList = imgService.list(new QueryWrapper<UniversityImg>()
                 .select("id", "url")
                 .eq("school_id", schoolId)
-                .orderByDesc("rank"));
+                .orderByDesc("`rank`"));
 
         HashMap<String, Object> map = new HashMap<>();
         map.put("images",imgList);
